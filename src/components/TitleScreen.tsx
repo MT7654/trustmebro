@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Volume2, VolumeX, Eye, EyeOff, Play, ShieldAlert, Sparkles, HelpCircle, ArrowRight, UserCheck, Flame } from 'lucide-react';
-import { CharacterIllustration } from './CharacterIllustration';
 import { sound } from '../utils/sound';
 
 interface TitleScreenProps {
@@ -111,7 +110,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
 
           {/* Narrative Premise */}
           <p className="font-body text-sm sm:text-base text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-            You're hanging out at Ryan's place on a Friday night. A peach vape pod is being passed across the coffee table with total confidence. Noah says Alyssa tested it. Alyssa says Ryan checked it. Ryan swears his Telegram seller is verified.
+            You're at Ryan's place on a Saturday night. A sealed device crosses the coffee table with total confidence. Noah says Alyssa checked it. Alyssa says Ryan checked it. Ryan trusts one unknown source.
           </p>
 
           {/* Key Visual Callout / Core Mechanic Teaser */}
@@ -144,47 +143,26 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
 
         {/* Right Column: Key Visual / Cast Staging */}
         <div className="w-full lg:w-1/2 flex flex-col items-center justify-center">
-          <div className="relative w-full max-w-lg aspect-[4/3] bg-gradient-to-b from-slate-900/90 to-slate-950/90 border-2 border-slate-700/80 rounded-lg p-4 sm:p-6 overflow-hidden shadow-2xl flex flex-col justify-between">
-            {/* Window background with city lights */}
-            <div className="absolute top-2 right-4 text-[10px] font-display text-slate-500 uppercase tracking-widest">
+          <div className="relative w-full max-w-xl aspect-[16/10] bg-slate-950 rounded-[1.5rem] overflow-hidden shadow-2xl flex flex-col justify-between ring-1 ring-white/15">
+            <img
+              src="/art/living-room-ensemble.png"
+              alt="Ryan, Noah and Alyssa gathered tensely around the living-room coffee table"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-slate-950/30" />
+            <div className="absolute top-3 right-4 rounded-full bg-black/55 px-3 py-1 text-[10px] font-display text-slate-200 uppercase tracking-widest backdrop-blur">
               SINGAPORE // 22:45 SGT
             </div>
 
             {/* Living room gathering visual */}
-            <div className="relative z-10 grid grid-cols-3 gap-2 sm:gap-4 items-end mt-4">
-              {/* Noah */}
-              <div className="flex flex-col items-center text-center group">
-                <div className="relative bg-emerald-950/50 border border-emerald-500/40 rounded p-1 w-full flex flex-col items-center transition-transform group-hover:scale-105">
-                  <CharacterIllustration characterId="noah" expression="worried" size="md" />
-                  <span className="text-xs font-heading font-black text-emerald-300 uppercase mt-1">NOAH</span>
-                  <span className="text-[10px] text-slate-400 font-display">"Alyssa took a hit"</span>
-                </div>
-              </div>
-
-              {/* Ryan (Center / Host) */}
-              <div className="flex flex-col items-center text-center -translate-y-2 group">
-                <div className="relative bg-amber-950/60 border-2 border-amber-400 rounded p-1.5 w-full flex flex-col items-center shadow-lg transition-transform group-hover:scale-105">
-                  <span className="absolute -top-3 bg-amber-400 text-black text-[9px] font-display font-black px-2 py-0.5 uppercase tracking-wider rounded-sm">
-                    HOST
-                  </span>
-                  <CharacterIllustration characterId="ryan" expression="smiling" size="md" />
-                  <span className="text-xs font-heading font-black text-amber-300 uppercase mt-1">RYAN</span>
-                  <span className="text-[10px] text-slate-300 font-display">"Seller is legit"</span>
-                </div>
-              </div>
-
-              {/* Alyssa */}
-              <div className="flex flex-col items-center text-center group">
-                <div className="relative bg-purple-950/50 border border-purple-500/40 rounded p-1 w-full flex flex-col items-center transition-transform group-hover:scale-105">
-                  <CharacterIllustration characterId="alyssa" expression="neutral" size="md" />
-                  <span className="text-xs font-heading font-black text-purple-300 uppercase mt-1">ALYSSA</span>
-                  <span className="text-[10px] text-slate-400 font-display">"Ryan checked it"</span>
-                </div>
-              </div>
+            <div className="relative z-10 mt-auto grid grid-cols-3 items-end gap-2 px-4 pb-16 text-center">
+              <div className="rounded-full bg-emerald-950/80 px-2 py-1 text-[10px] font-display font-bold text-emerald-200 backdrop-blur">NOAH · RELIED ON RYAN</div>
+              <div className="rounded-full bg-amber-950/85 px-2 py-1 text-[10px] font-display font-bold text-amber-200 backdrop-blur ring-1 ring-amber-400/70">RYAN · THE HOST</div>
+              <div className="rounded-full bg-purple-950/80 px-2 py-1 text-[10px] font-display font-bold text-purple-200 backdrop-blur">ALYSSA · TRUSTED RYAN</div>
             </div>
 
             {/* Coffee table scene foreground */}
-            <div className="relative z-10 mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-display">
+            <div className="absolute inset-x-0 bottom-0 z-10 border-t border-white/10 bg-black/75 px-4 py-3 flex items-center justify-between text-xs text-slate-300 font-display backdrop-blur">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
                 <span className="text-slate-300">Coffee Table // 1 Unverified Pod</span>

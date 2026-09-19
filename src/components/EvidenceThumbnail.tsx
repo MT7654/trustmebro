@@ -168,7 +168,7 @@ export const EvidenceThumbnail: React.FC<EvidenceThumbnailProps> = ({
           <rect x="42" y="28" width="76" height="16" fill="#0b1329" />
           <circle cx="52" cy="36" r="5" fill="#f59e0b" />
           <text x="61" y="38" fill="#e2e8f0" fontSize="5.5" fontWeight="bold" fontFamily="sans-serif">
-            @VaporKush_SG
+            UNKNOWN SELLER
           </text>
 
           {/* Message 1: Ryan asking */}

@@ -62,57 +62,57 @@ const CHAT_THREADS: ChatThread[] = [
         sender: 'seller',
         senderLabel: 'UNKNOWN SELLER',
         time: '18:20',
-        text: 'New inventory restocked today. Peach nectar & sweet citrus flavors available.',
-        reflectionText: '“A standard broadcast message from this unverified contact. Doesn’t establish anything about safety testing.”'
+        text: 'Same as before.',
+        reflectionText: '“A vague message from an unverified contact. It does not establish anything about this device.”'
       },
       {
         id: 'msg_ryan_1',
         sender: 'ryan',
         senderLabel: 'Ryan',
         time: '18:45',
-        text: 'Hey, can I grab one peach pod before the guys head over to my place tonight?',
-        reflectionText: '“Just Ryan ordering a pod for the hangout tonight.”'
+        text: 'This one normal, right?',
+        reflectionText: '“Ryan is asking for reassurance, not providing verification.”'
       },
       {
         id: 'msg_seller_2',
         sender: 'seller',
         senderLabel: 'UNKNOWN SELLER',
         time: '18:48',
-        text: 'Sure thing bro. Location confirmed.',
-        reflectionText: '“Logistical chatter about meeting up.”'
+        text: 'Yeah. Normal only.',
+        reflectionText: '“The reply is confident, but confidence is not independent evidence.”'
       },
       {
         id: 'msg_ryan_2',
         sender: 'ryan',
         senderLabel: 'Ryan',
         time: '19:10',
-        text: 'Yo is this specific peach batch tested and normal? Nothing weird or unverified in the liquid right?',
-        reflectionText: '“Ryan specifically asked about the chemical safety of this exact cartridge! Let’s see how the seller responded.”'
+        text: 'You checked?',
+        reflectionText: '“Ryan asks the source to support the claim. The next reply matters.”'
       },
       {
         id: 'msg_seller_3',
         sender: 'seller',
         senderLabel: 'UNKNOWN SELLER',
         time: '19:11',
-        text: '100% normal bro, sweet peach only. Trust me, all my stuff is clean.',
+        text: 'Same as before. Trust me.',
         isKeyClue: true,
-        reflectionText: '“Look at this response: Ryan asked for verification, and the seller only offered a one-line casual verbal assurance: \'100% normal bro trust me\'. No lab analysis, no batch certificate, no testing sheets attached whatsoever!”'
+        reflectionText: '“The source answers with reassurance, not independent support. The message cannot establish what is inside.”'
       },
       {
         id: 'msg_ryan_3',
         sender: 'ryan',
         senderLabel: 'Ryan',
         time: '19:14',
-        text: 'Alright sick thanks bro, see you later.',
-        reflectionText: '“Ryan accepted that single reassurance without asking for a single piece of real verification.”'
+        text: 'Okay. I trust you.',
+        reflectionText: '“Ryan accepts the reassurance without gaining any independent information.”'
       },
       {
         id: 'msg_seller_4',
         sender: 'seller',
         senderLabel: 'UNKNOWN SELLER',
         time: '20:05',
-        text: 'Package left at usual pickup spot.',
-        reflectionText: '“Unattended drop-off. No invoice, receipt, or merchant paperwork.”'
+        text: 'Seen.',
+        reflectionText: '“Nothing in this message adds evidence about the contents.”'
       }
     ]
   },
@@ -316,10 +316,10 @@ export const PhoneInspectionModal: React.FC<PhoneInspectionModalProps> = ({
               const isSelected = selectedMessageId === msg.id;
 
               return (
-                <div
+                <button
                   key={msg.id}
                   onClick={() => handleSelectMessage(msg)}
-                  className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} cursor-pointer group transition-all`}
+                  className={`flex w-full flex-col ${isMe ? 'items-end' : 'items-start'} cursor-pointer group transition-all text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300 rounded-xl`}
                 >
                   <div
                     className={`max-w-[85%] sm:max-w-[78%] rounded-xl p-2.5 shadow transition-all ${
@@ -357,7 +357,7 @@ export const PhoneInspectionModal: React.FC<PhoneInspectionModalProps> = ({
                       Click message to inspect
                     </span>
                   )}
-                </div>
+                </button>
               );
             })}
           </div>

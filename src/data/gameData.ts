@@ -4,12 +4,12 @@ export const INITIAL_CHARACTERS: Record<string, Character> = {
   ryan: {
     id: 'ryan',
     name: 'Ryan',
-    role: 'The Host & Supplier',
+    role: 'The Host',
     avatarColor: 'from-amber-500 to-red-600',
     badge: 'HOLDING THE VAPE',
     currentExpression: 'smiling',
     initialStatement: `"Normal only. Not Kpod. Noah backed it, Alyssa is chill, and my seller is verified. That's three separate confirmations."`,
-    statusText: 'Holding out a sleek pastel peach vape pod towards you with an easy grin.'
+    statusText: 'Holding the sealed device out while the room waits for your reaction.'
   },
   alyssa: {
     id: 'alyssa',
@@ -71,7 +71,7 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
         speaker: 'Noah',
         characterId: 'noah',
         expression: 'alarmed',
-        text: `“Wait... so anyone could buy generic empty cartridges and fill them with unverified liquids?”`
+        text: `“Wait... so the hardware still tells us nothing about what is inside this specific device?”`
       },
       {
         speaker: 'Ryan',
@@ -104,7 +104,7 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
       item_inspected_box: `Noah looks at the box: "We already know the box is unmarked, but Alyssa took a hit and said it's peach. How does the box prove she didn't check it?"`,
       item_unmarked_foil_pod: `Noah looks at the pod: "Sure, the cartridge is unlabelled, but Alyssa took a hit. How does the hardware prove she didn't check it?"`,
       quote_ryan_trusted_seller: `Noah frowns: "Wait, I wasn't talking about Ryan or his dealer. I was talking about Alyssa taking a puff right in front of us."`,
-      item_telegram_chat_log: `Noah blinks: "Telegram? Bro, I don't know what app Ryan uses. I just saw Alyssa puff it."`,
+      item_telegram_chat_log: `Noah blinks: "I don't know who Ryan messages. I just saw Alyssa take a puff."`,
       quote_noah_relied_ryan: `Noah crosses his arms: "Yeah, I trust Ryan. But I brought up Alyssa checking it, not who I trust. That doesn't disprove what I said about her."`,
       card_one_origin_three_voices: `Noah scratches his head: "That map makes sense for the whole room, but it doesn't address what I said about Alyssa checking it."`
     },
@@ -172,7 +172,7 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
         speaker: 'Alyssa',
         characterId: 'alyssa',
         expression: 'shocked',
-        text: `“Wait... Ryan?! You didn't check anything at all?! You just took a text message from a stranger on Telegram?!”`
+        text: `“Wait... Ryan?! You didn't check anything at all?! You just accepted a stranger's message?”`
       },
       {
         speaker: 'Noah',
@@ -206,7 +206,7 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
       item_unmarked_foil_pod: `Ryan waves his hand: "The pod hardware doesn't change that Noah, Alyssa, and my seller all said it's good!"`,
       quote_alyssa_only_tried: `Ryan waves his hand: "So what if Alyssa just tried it? Noah's still chill with it and my seller is verified! That's three separate confirmations, bro!"`,
       quote_ryan_trusted_seller: `Ryan says: "Yeah, I trusted my seller. But Alyssa took two puffs and Noah backed me. That's still three people saying it's fine!"`,
-      item_telegram_chat_log: `Ryan frowns: "Sure, Telegram chat, but Noah, Alyssa, and my guy all vouch for it—that's three separate checks!"`,
+      item_telegram_chat_log: `Ryan frowns: "Sure, that chat is vague, but Noah, Alyssa, and the seller all vouched for it—that's three separate checks!"`,
       quote_noah_relied_ryan: `Ryan shrugs: "Noah's my bro, of course he backs me! But that's still three people in this room saying it's safe!"`
     },
     breakthroughDialogue: [
@@ -220,7 +220,7 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
         speaker: 'Player',
         characterId: 'player',
         expression: 'skeptical',
-        text: `“Noah relied on you. Alyssa relied on you. And you relied on an unknown seller on Telegram. THREE CHECKS collapse into ONE UNKNOWN CLAIM!”`
+        text: `“Noah relied on you. Alyssa relied on you. And you relied on one unknown seller. THREE CHECKS collapse into ONE UNKNOWN CLAIM!”`
       },
       {
         speaker: 'Noah',
@@ -244,7 +244,7 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
         speaker: 'Player',
         characterId: 'player',
         expression: 'neutral',
-        text: `“We're not saying you meant any harm, Ryan. And we don't know what's in that vape liquid—it could be harmless peach flavor, or it could be tainted black-market chemicals. But the truth is: NOBODY in this room actually knows.”`
+        text: `“We're not saying you meant any harm, Ryan. We don't know what is inside, and nothing we observed can settle that. The truth is: NOBODY in this room actually knows.”`
       },
       {
         speaker: 'Ryan',
@@ -290,10 +290,10 @@ export const ALL_DISCOVERABLE_QUOTES: Record<string, EvidenceQuote> = {
     speakerId: 'ryan',
     speakerName: 'Digital Record',
     category: 'digital',
-    title: 'Chat Log with UNKNOWN SELLER',
+    title: 'Message Log with UNKNOWN SELLER',
     thumbnailType: 'phone',
-    neutralDescription: 'Direct messaging thread on Ryan\'s phone. Ryan asked if this batch had test sheets; the anonymous seller replied \'100% normal bro trust me\' with zero documentation.',
-    quote: '“Message history: Ryan asked if this specific vape batch was verified. The UNKNOWN SELLER replied: \'100% normal bro trust me\' with zero test sheets or lab certificates provided.”',
+    neutralDescription: 'A message thread on Ryan\'s phone. Ryan asked whether this specific device was checked; the unknown seller replied with reassurance but no independent support.',
+    quote: '“Ryan asked whether this specific device had been checked. The UNKNOWN SELLER replied: \'Normal only. Same as before. Trust me.\' No independent support was provided.”',
     context: 'Screen examined on Ryan’s phone on the table.',
     contradictsClaimId: 'claim_alyssa_ryan',
     tag: 'DIGITAL RECORD (UNVERIFIED CHAT)',
@@ -346,26 +346,13 @@ export const ALL_DISCOVERABLE_QUOTES: Record<string, EvidenceQuote> = {
     speakerId: 'ryan',
     speakerName: 'Ryan',
     category: 'verbal',
-    title: `The Anonymous Contact`,
+    title: `The Unknown Source`,
     thumbnailType: 'ryan',
-    neutralDescription: 'Ryan confirmed the supplier is an anonymous Telegram handle with zero verifiable business identity.',
-    quote: `“Just an unverified account labelled UNKNOWN SELLER. Anyone can write 'clean grade' in a bio without testing anything.”`,
+    neutralDescription: 'Ryan confirmed that the person behind the assurance could not be independently verified.',
+    quote: `“I only know the contact as UNKNOWN SELLER. The account gave me reassurance, not evidence.”`,
     context: `Revealed when pressing Ryan on his supplier's true identity and packaging.`,
     contradictsClaimId: '',
     tag: `DEPENDENCY: RYAN → UNKNOWN SELLER`
-  },
-  quote_alyssa_onset_chill: {
-    id: 'quote_alyssa_onset_chill',
-    speakerId: 'alyssa',
-    speakerName: 'Alyssa',
-    category: 'verbal',
-    title: `Alyssa's Physical Sensation`,
-    thumbnailType: 'alyssa',
-    neutralDescription: 'Alyssa noticed heavy eyelids and tingling fingers 10 minutes after inhalation, demonstrating latency.',
-    quote: `“Wait... my head feels super heavy and my fingers are tingling. I don't feel normal anymore.”`,
-    context: `Revealed when pressing Alyssa on whether she feels 100% fine 10 minutes in.`,
-    contradictsClaimId: '',
-    tag: `LATENCY SYMPTOMS`
   },
   card_one_origin_three_voices: {
     id: 'card_one_origin_three_voices',
@@ -411,7 +398,7 @@ export const INVESTIGATION_HOTSPOTS: InvestigationHotspot[] = [
     title: 'Ryan’s Phone: Messages with Unknown Seller',
     category: 'digital',
     label: 'Ask Ryan to Show Messages',
-    shortDesc: 'Ryan\'s unlocked phone showing direct chat history with the unverified seller @VaporKush_SG.',
+    shortDesc: 'Ryan\'s unlocked phone showing a short exchange with an unknown seller.',
     evidenceId: 'item_telegram_chat_log',
     isInspected: false,
     x: 34,
@@ -514,12 +501,11 @@ export const TESTIMONY_STEPS: Record<string, TestimonyStep> = {
       },
       {
         id: 'inq_alyssa_3',
-        label: `“Are you sure you're feeling completely fine? Your eyelids look heavy.”`,
-        speakerResponse: `Alyssa blinks slowly, rubbing her temples: “Wait... actually, my head feels super heavy and my fingers are tingling. I don't feel normal anymore... is it hot in here?”`,
-        speakerExpression: 'zoned_out',
-        internalThought: `Inhaled synthetic sedatives like etomidate have a 5 to 15 minute onset window. Her symptoms are just starting.`,
-        grantsQuote: ALL_DISCOVERABLE_QUOTES.quote_alyssa_onset_chill,
-        tensionChange: 15
+        label: `“Did feeling fine right away prove what was inside?”`,
+        speakerResponse: `Alyssa pauses: “No. It only proves I didn't notice anything obvious in that moment. I still never checked what was inside.”`,
+        speakerExpression: 'worried',
+        internalThought: `Her immediate experience cannot verify the contents or safety of the device.`,
+        tensionChange: 5
       }
     ]
   },
@@ -540,10 +526,10 @@ export const TESTIMONY_STEPS: Record<string, TestimonyStep> = {
       },
       {
         id: 'inq_ryan_2',
-        label: `“Who is 'your guy' in real life, Ryan? Where did you meet him?”`,
-        speakerResponse: `Ryan looks away: “Ai ya... Telegram contact la. Just an account called @VaporKush_SG on Telegram. Dropped in a ziplock behind a riser. Anyone can write 'clean grade' in a bio, I guess...”`,
+        label: `“Could you independently verify the person behind that assurance?”`,
+        speakerResponse: `Ryan looks away: “No. I only knew the account as UNKNOWN SELLER. I had no independent way to check who was behind it.”`,
         speakerExpression: 'defensive',
-        internalThought: `An anonymous Telegram dead-drop behind an HDB stairwell! Ryan relied on an unknown seller!`,
+        internalThought: `Ryan relied on a source he could not independently verify.`,
         grantsQuote: ALL_DISCOVERABLE_QUOTES.quote_telegram_anonymous,
         tensionChange: 20
       },
@@ -597,27 +583,19 @@ export const GAME_ENDINGS: Record<EndingType, GameEnding> = {
     type: 'BREAK_THE_CHAIN',
     title: 'BREAK THE CHAIN',
     subtitle: 'You explained that everyone repeated the same seller\'s word, stopping the unverified cycle.',
-    badge: 'CHAIN DISMANTLED (S-RANK)',
+    badge: 'CHAIN DISMANTLED',
     badgeColor: 'bg-emerald-500 text-black',
-    grade: 'S',
-    narrativeText: `You address the living room calmly and clearly:
+    narrativeText: `You keep your voice calm.
 
-“Guys, think about how this confidence was built in this room. Noah relied on Ryan. Alyssa relied on Ryan. And Ryan relied on an anonymous seller on Telegram. That’s three people repeating one unverified claim from a stranger.
+“Noah relied on Ryan. Alyssa relied on Ryan. Ryan relied on one anonymous seller. That is not three checks—it is one unverified claim repeated around the room. None of us knows what is inside, and appearance or immediate effects cannot prove safety.”
 
-Nobody in this room knows what is actually inside that pod—whether it’s standard illicit liquid or an adulterated batch. None of us has the equipment or lab testing to verify it. We are mistaking our friendship with Ryan for quality assurance on a stranger's black-market product.”
+The room goes quiet. Noah admits he only trusted Ryan. Alyssa slides the device away: “Taking a puff did not verify anything.”
 
-Silence settles across the coffee table.
+Ryan’s posture softens. “You’re right. I took the message at face value. Let’s put it away.”
 
-Noah looks at the vape, then at Alyssa: “...He’s right. I didn’t test anything. I just assumed because Ryan brought it, someone had verified it.”
-
-Alyssa nods slowly, sliding the pod away across the glass table: “Yeah. The fact that I took a puff and didn't collapse doesn't prove it's clean either. It’s not worth gambling on.”
-
-Ryan sits quietly for a moment, looking at his friends. The defensiveness leaves his posture:
-“...You're right. I took the seller's text at face value because he was friendly. That was dumb of me. Let’s put this away.”
-
-The pod goes back into Ryan's bag, unconsumed. The contents remain unresolved—whether standard liquid or synthetic additives, it doesn't matter. You dissolved the false consensus without attacking anyone, and the chain stopped right here.`,
+The device goes back into Ryan's bag, unused. Its contents remain unknown. You challenged the chain without attacking your friends, and the pressure ends here.`,
     extendedSourceChain: {
-      seller: 'Unknown Telegram Seller (@VaporKush_SG)',
+      seller: 'Unknown Seller (unverified source)',
       ryan: 'Ryan (Offered pod based on seller text)',
       group: 'Noah & Alyssa (Echoed confidence without checking)',
       player: 'You (Exposed the circular chain with calm logic)',
@@ -634,12 +612,11 @@ The pod goes back into Ryan's bag, unconsumed. The contents remain unresolved—
     type: 'RIGHT_BUT_ALONE',
     title: 'RIGHT, BUT ALONE',
     subtitle: 'You made the correct argument, but attacked Ryan personally and polarized the room.',
-    badge: 'DEFENSIVE BACKLASH (C-RANK)',
+    badge: 'DEFENSIVE BACKLASH',
     badgeColor: 'bg-amber-500 text-black',
-    grade: 'C',
     narrativeText: `You identify the unverified seller, but you direct your frustration squarely at Ryan:
 
-“Are you an idiot, Ryan? You bought sketchy crap from some shady Telegram dealer and brought it here to push onto your friends! What kind of reckless criminal are you trying to be?!”
+“Are you an idiot, Ryan? You trusted a stranger and brought this here to push onto your friends! What kind of reckless person does that?!”
 
 Ryan’s face turns bright red with humiliated fury:
 “Poison you?! Bro, I paid for this out of my own pocket to share on a chill weekend, and you’re calling me a criminal dealer in front of everyone?! You think I want to hurt my own friends?!”
@@ -654,7 +631,7 @@ Even though your underlying logic about the anonymous seller was completely corr
 
 You were right about the chain, but your attack forced the group to defend Ryan, leaving them at risk.`,
     extendedSourceChain: {
-      seller: 'Unknown Telegram Seller (@VaporKush_SG)',
+      seller: 'Unknown Seller (unverified source)',
       ryan: 'Ryan (Defensively doubling down to save face)',
       group: 'Noah & Alyssa (Siding with Ryan against your hostility)',
       player: 'You (Alienated despite accurate logic)',
@@ -671,15 +648,14 @@ You were right about the chain, but your attack forced the group to defend Ryan,
     type: 'FALSE_CONSENSUS',
     title: 'FALSE CONSENSUS',
     subtitle: 'You tried to verify safety by asking the unverified seller to confirm their own claim.',
-    badge: 'CIRCULAR VALIDATION (D-RANK)',
+    badge: 'CIRCULAR VALIDATION',
     badgeColor: 'bg-orange-500 text-white',
-    grade: 'D',
     narrativeText: `You hesitate and say to Ryan:
-“Can you message that Telegram seller right now and ask him if he can guarantee this batch is clean?”
+“Can you message that seller right now and ask if they can guarantee this batch is safe?”
 
 Ryan pulls out his phone: “Easy bro, I’ll text him right now.”
 
-Thirty seconds later, Ryan turns his screen around, showing a response from @VaporKush_SG:
+Thirty seconds later, Ryan turns his screen around, showing another response from UNKNOWN SELLER:
 “Bro 100% authentic peach flavour, fresh import, zero funny stuff. Super clean boss, trust me.”
 
 Ryan grins triumphantly: “See? I literally just double-checked with him directly. He confirmed it. What else do you need?”
@@ -691,7 +667,7 @@ By asking the unknown seller to verify his own product, you sought reassurance f
 
 Instead of breaking the illusion, you gave the group a false sense of security that reinforced the loop.`,
     extendedSourceChain: {
-      seller: 'Unknown Telegram Seller (Vouches for himself to protect profits)',
+      seller: 'Unknown Seller (Vouches for their own unverified claim)',
       ryan: 'Ryan (Takes seller\'s repeated text as double proof)',
       group: 'Noah & Alyssa (Relieved by the fake second confirmation)',
       player: 'You (Trapped in circular confirmation bias)',
@@ -708,12 +684,11 @@ Instead of breaking the illusion, you gave the group a false sense of security t
     type: 'THE_GUESS',
     title: 'THE GUESS',
     subtitle: 'You claimed certainty without proof, giving the group an easy way to dismiss your warning.',
-    badge: 'EASY DISMISSAL (C-RANK)',
+    badge: 'EASY DISMISSAL',
     badgeColor: 'bg-amber-600 text-white',
-    grade: 'C',
     narrativeText: `Instead of focusing on the fact that nobody knows what's inside, you make an unproven assertion:
 
-“This definitely has drugs in it! I know for a fact this is laced with Kpod space oil or synthetic ketamine!”
+“This definitely contains a dangerous drug. I know it does!”
 
 Ryan stares at you in disbelief, then laughs:
 “Bro, what on earth are you talking about? Are you hallucinating? Alyssa literally took two puffs ten minutes ago and she’s sitting right there laughing at cat videos. Where are the drugs?!”
@@ -728,7 +703,7 @@ By claiming certainty on something you couldn't prove, you handed them an easy c
 
 The real hazard—that illicit vapes have zero quality standards and unpredictable chemical contents—was lost beneath your ungrounded speculation.`,
     extendedSourceChain: {
-      seller: 'Unknown Telegram Seller (@VaporKush_SG)',
+      seller: 'Unknown Seller (unverified source)',
       ryan: 'Ryan (Dismisses your warning as hysteria)',
       group: 'Noah & Alyssa (Point to Alyssa\'s lack of symptoms as proof)',
       player: 'You (Discredited by making an unprovable leap)',
@@ -745,9 +720,8 @@ The real hazard—that illicit vapes have zero quality standards and unpredictab
     type: 'THE_NEXT_VOICE',
     title: 'THE NEXT VOICE',
     subtitle: 'You yielded to apparent confidence. Your survival became the next reassurance in the chain.',
-    badge: 'THE UNBROKEN CHAIN (F-GRADE)',
+    badge: 'THE UNBROKEN CHAIN',
     badgeColor: 'bg-rose-700 text-white',
-    grade: 'F',
     narrativeText: `You look at Noah’s calm expression, Ryan’s easy smile, and Alyssa relaxing on the sofa.
 
 “Well... Alyssa seems completely fine, and everyone else is sure. I guess one puff won’t hurt.”
@@ -760,7 +734,7 @@ The gathering continues casually. You split some pizza, watch videos, and pack u
 
 ---
 
-Two weeks later, you are at Leo’s apartment with Chloe. Chloe pulls out a different unbranded cartridge purchased from a Telegram channel.
+Two weeks later, you are at Leo’s apartment with Chloe. Chloe produces a different unbranded cartridge from another unverified source.
 
 Leo hesitates, looking nervous: “Wait... is that thing actually safe? I’ve heard weird stuff about black-market pods lately.”
 
@@ -774,7 +748,7 @@ Leo relaxes his shoulders: “Oh, okay. If you tried it and were fine, then pass
 
 You didn't verify anything. You didn't know what was in Ryan's pod, and you know even less about Chloe's. But your simple survival just became the next link of unearned reassurance, passing the blind gamble forward to another friend.`,
     extendedSourceChain: {
-      seller: 'Unknown Telegram Seller (@VaporKush_SG)',
+      seller: 'Unknown Seller (unverified source)',
       ryan: 'Ryan (Offered pod based on text message)',
       group: 'Noah & Alyssa (Echoed confidence without checking)',
       player: 'You (Inhaled because "Alyssa seemed fine")',

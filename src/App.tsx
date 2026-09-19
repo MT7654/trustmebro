@@ -38,6 +38,7 @@ import { LostExchangeModal } from './components/LostExchangeModal';
 import { StructureOverviewModal } from './components/StructureOverviewModal';
 import { HowToPlayModal } from './components/HowToPlayModal';
 import { TutorialGuide } from './components/TutorialGuide';
+import { canAddObjectToEvidenceInventory } from './gameRules';
 import { sound } from './utils/sound';
 import { AlertTriangle, Network, ShieldCheck, Flame, Info, Sparkles, Pin, Bookmark, Quote, Swords } from 'lucide-react';
 
@@ -89,6 +90,7 @@ export default function App() {
 
   // Handle collecting evidence during the Investigation segment
   const handleCollectInvestigationEvidence = (quote: EvidenceQuote) => {
+    if (!canAddObjectToEvidenceInventory(quote.id)) return;
     sound.playPaperSlide();
     setCollectedQuotes(prev => {
       if (prev.some(q => q.id === quote.id)) return prev;
@@ -426,7 +428,7 @@ export default function App() {
       />
 
       {/* Main Playable Stage by Segment */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-2 py-2 sm:px-4 sm:py-3 flex flex-col space-y-2.5">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-2 py-2 sm:px-5 sm:py-3 flex flex-col space-y-3">
         <TutorialGuide
           step={tutorialStep}
           onSkip={() => {
@@ -587,7 +589,7 @@ export default function App() {
         isOpen={isStructureOverviewOpen}
         onProceed={() => {
           setIsStructureOverviewOpen(false);
-          setTutorialStep('investigation_select_box');
+          setTutorialStep('investigation_select_speaker');
         }}
       />
 

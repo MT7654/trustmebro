@@ -42,7 +42,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
       id: 'scene_1_gathering',
       tag: 'SCENE 1 // CASUAL REUNION',
       title: "Saturday Night at Ryan's Flat",
-      settingSubtitle: "Living Room &bull; Toa Payoh, Singapore &bull; 21:45 SGT",
+      settingSubtitle: "Living Room • Toa Payoh, Singapore • 21:45 SGT",
       speakerId: 'alyssa',
       speakerName: 'Alyssa',
       speakerRole: 'Close Friend since Secondary School',
@@ -55,7 +55,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
       id: 'scene_2_banter',
       tag: 'SCENE 2 // OLD HABITS',
       title: 'Comfortable Banter',
-      settingSubtitle: "Living Room &bull; Mario Kart paused on the television",
+      settingSubtitle: "Living Room • Mario Kart paused on the television",
       speakerId: 'noah',
       speakerName: 'Noah',
       speakerRole: 'Track Athlete & Friend',
@@ -68,7 +68,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
       id: 'scene_3_unveiling',
       tag: 'SCENE 3 // THE UNVEILING',
       title: 'A Device on the Table',
-      settingSubtitle: "Living Room &bull; Low coffee table",
+      settingSubtitle: "Living Room • Low coffee table",
       speakerId: 'ryan',
       speakerName: 'Ryan',
       speakerRole: 'The Host',
@@ -81,7 +81,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
       id: 'scene_4_the_assurance',
       tag: 'SCENE 4 // THE ASSURANCE',
       title: '“Trust Me, Bro”',
-      settingSubtitle: "Living Room &bull; Ryan holding the pod forward",
+      settingSubtitle: "Living Room • Ryan holding the pod forward",
       speakerId: 'ryan',
       speakerName: 'Ryan',
       speakerRole: 'Holding the Vape',
@@ -94,7 +94,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
       id: 'scene_5_echoes',
       tag: 'SCENE 5 // THE CONSENSUS FORMS',
       title: 'The Reassurances Echo',
-      settingSubtitle: "Living Room &bull; Alyssa and Noah nod along",
+      settingSubtitle: "Living Room • Alyssa and Noah nod along",
       speakerId: 'alyssa',
       speakerName: 'Alyssa',
       speakerRole: 'Witness',
@@ -107,7 +107,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
       id: 'scene_6_your_turn',
       tag: 'SCENE 6 // THE SPOTLIGHT',
       title: 'All Eyes Turn to You',
-      settingSubtitle: `Living Room &bull; Ryan offers the pod to ${playerName}`,
+      settingSubtitle: `Living Room • Ryan offers the pod to ${playerName}`,
       speakerId: 'ryan',
       speakerName: 'Ryan',
       speakerRole: 'Offering the Pod',
@@ -144,7 +144,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
   };
 
   return (
-    <div className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col justify-between p-4 sm:p-8 font-body selection:bg-amber-500 selection:text-black relative overflow-hidden">
+    <div className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col justify-between p-4 sm:p-6 font-body selection:bg-amber-500 selection:text-black relative overflow-hidden">
       {/* Background Room Atmosphere */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/90 via-slate-950 to-black pointer-events-none" />
       
@@ -153,7 +153,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
       <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Top Bar Navigation */}
-      <header className="relative z-10 max-w-4xl w-full mx-auto flex items-center justify-between border-b border-slate-800 pb-3">
+      <header className="relative z-10 max-w-7xl w-full mx-auto flex items-center justify-between border-b border-slate-800/70 pb-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
@@ -179,7 +179,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
       </header>
 
       {/* Main Visual Novel Dialogue Stage */}
-      <main className="relative z-10 max-w-4xl w-full mx-auto my-auto py-4 sm:py-8 flex flex-col gap-4">
+      <main className="relative z-10 max-w-7xl w-full mx-auto my-auto py-3 flex flex-col gap-3">
         {/* Scene Heading Badge */}
         <div className="flex items-center justify-between text-xs font-display">
           <span className="text-amber-400 font-bold uppercase tracking-widest bg-slate-900 px-3 py-1 rounded border border-slate-800">
@@ -198,23 +198,48 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.25 }}
-            className="bg-slate-900/95 border-2 border-slate-700 rounded-xl overflow-hidden shadow-2xl flex flex-col md:flex-row"
+            className="relative min-h-[560px] bg-gradient-to-br from-slate-900/95 via-slate-950/95 to-black overflow-hidden shadow-2xl flex flex-col md:flex-row rounded-[2rem] ring-1 ring-white/10"
           >
+            <img
+              src="/art/living-room-ensemble.png"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-cover opacity-25"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/30 via-slate-950/70 to-slate-950" />
+            <div className="absolute inset-0 manga-lines opacity-50 pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black via-black/55 to-transparent pointer-events-none" />
             {/* Left: Speaker Illustration Showcase */}
-            <div className="md:w-5/12 bg-slate-950 p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-800 relative">
+            <div className="md:w-[58%] min-h-[360px] md:min-h-[560px] p-4 flex flex-col items-center justify-end relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(245,158,11,0.18),transparent_45%)]" />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] h-24 rounded-[50%] bg-black/70 blur-xl" />
               {/* Speaker Portrait */}
-              <div className="relative w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
+              <div className="relative z-10 w-64 h-72 sm:w-80 sm:h-[26rem] flex items-end justify-center origin-bottom">
                 <CharacterIllustration
                   characterId={currentScene.speakerId}
                   playerGender={playerGender}
                   expression={currentScene.expression}
-                  size="md"
+                  size="full"
                   className="w-full h-full"
                 />
               </div>
 
+              {currentStep >= 2 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.75, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  className="absolute z-20 bottom-14 right-8 sm:right-14 rotate-[-8deg]"
+                  aria-label="The sealed device is placed on the coffee table"
+                >
+                  <div className="w-20 h-28 rounded-2xl bg-gradient-to-b from-rose-200 via-orange-200 to-amber-100 border-4 border-slate-950 shadow-[0_18px_30px_rgba(0,0,0,.55)] relative">
+                    <div className="absolute top-4 inset-x-2 text-center text-[8px] text-rose-950 font-display font-black tracking-widest">SEALED</div>
+                    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-5 h-12 rounded-full bg-slate-800 border border-slate-600" />
+                  </div>
+                </motion.div>
+              )}
+
               {/* Speaker Nameplate */}
-              <div className="text-center mt-3">
+              <div className="relative z-30 text-center -mt-12 mb-5 bg-black/75 backdrop-blur px-6 py-2 skew-x-[-5deg] border-l-4 border-amber-400">
                 <div className="font-heading font-black text-base sm:text-lg text-amber-400 uppercase tracking-wider">
                   {currentScene.speakerName}
                 </div>
@@ -224,7 +249,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
               </div>
 
               {/* Player Avatar Tag in Bottom Corner */}
-              <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-slate-900/80 border border-slate-800 rounded text-[10px] font-display text-slate-400">
+              <div className="absolute z-30 top-4 left-4 flex items-center gap-1.5 px-2 py-1 bg-slate-950/80 border border-slate-700 rounded-full text-[10px] font-display text-slate-300">
                 <div className="w-4 h-4 rounded-full overflow-hidden bg-slate-800">
                   <CharacterIllustration
                     characterId="player"
@@ -239,21 +264,22 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
             </div>
 
             {/* Right: Dialogue & Scene Context */}
-            <div className="md:w-7/12 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+            <div className="relative z-20 md:w-[42%] p-6 sm:p-9 flex flex-col justify-between space-y-6 bg-slate-950/55 backdrop-blur-sm md:border-l border-white/10">
               <div className="space-y-4">
                 <div className="text-[10px] font-display uppercase tracking-widest text-slate-500 font-bold">
                   {currentScene.title}
                 </div>
 
                 {/* Main Spoken Dialogue */}
-                <div className="p-4 bg-slate-950/80 border border-slate-800 rounded-lg relative">
-                  <p className="font-body text-base sm:text-lg text-slate-100 font-semibold leading-relaxed">
+                <div className="relative py-5 border-y border-amber-400/30">
+                  <div className="absolute -left-3 top-3 text-5xl text-amber-400/20 font-heading">“</div>
+                  <p className="relative font-body text-lg sm:text-xl text-slate-50 font-semibold leading-relaxed">
                     {currentScene.dialogue}
                   </p>
                 </div>
 
                 {/* Environmental & Group Context */}
-                <p className="font-body text-xs sm:text-sm text-slate-400 italic leading-relaxed pl-2 border-l-2 border-amber-500/50">
+                <p className="font-body text-sm text-slate-300 italic leading-relaxed pl-3 border-l-2 border-amber-500/70">
                   {currentScene.contextNote}
                 </p>
               </div>

@@ -76,11 +76,11 @@ const CHARACTER_QUESTIONS: Record<string, QuestionOption[]> = {
     {
       id: 'alyssa_q2',
       questionLabel: '“How are you feeling physically right now?”',
-      responseDialogue: '“Actually... my forehead feels super heavy, and my fingertips are tingling. It took about 10 minutes to kick in. I don’t feel like myself.”',
+      responseDialogue: '“I seem okay right now, but that still cannot tell us what is inside or whether it is safe.”',
       expression: 'worried',
       isKeyTestimony: false,
-      targetQuoteId: 'quote_alyssa_onset_chill',
-      playerReflection: '“Delayed physical sensation. The latency of untested synthetic compounds can fool people into thinking they feel normal for the first few minutes.”'
+      targetQuoteId: '',
+      playerReflection: '“Immediate appearance is not verification. No reaction right now can establish the contents or safety of an unknown device.”'
     },
     {
       id: 'alyssa_q3',
@@ -112,10 +112,10 @@ const CHARACTER_QUESTIONS: Record<string, QuestionOption[]> = {
     {
       id: 'ryan_q3',
       questionLabel: '“Can you contact this seller if someone has an adverse reaction?”',
-      responseDialogue: '“It was an unverified handle with no real name attached... but come on, nobody’s having an adverse reaction!”',
+      responseDialogue: '“I only have an unverified account with no real identity attached... but come on, nobody seems worried!”',
       expression: 'alarmed',
       targetQuoteId: 'quote_telegram_anonymous',
-      playerReflection: '“The seller is completely anonymous and unaccountable. There is no recourse if the substance is adulterated.”'
+      playerReflection: '“The seller is completely anonymous and unaccountable. Their reassurance cannot verify an unknown device.”'
     }
   ]
 };

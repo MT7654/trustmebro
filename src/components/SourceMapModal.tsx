@@ -44,7 +44,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
   if (!isOpen) return null;
 
   const candidateNodes: NodeInfo[] = [
-    { id: 'unknown_seller', name: 'Unknown Seller', role: '@VaporKush_SG on Telegram', color: 'bg-red-950 text-red-300 border-red-500' },
+    { id: 'unknown_seller', name: 'Unknown Seller', role: 'Unverified source', color: 'bg-red-950 text-red-300 border-red-500' },
     { id: 'ryan', name: 'Ryan', role: 'Host & Pod Carrier', color: 'bg-amber-950 text-amber-300 border-amber-500' },
     { id: 'alyssa', name: 'Alyssa', role: 'Witness (2 puffs)', color: 'bg-purple-950 text-purple-300 border-purple-500' },
     { id: 'noah', name: 'Noah', role: 'Non-vaper Friend', color: 'bg-emerald-950 text-emerald-300 border-emerald-500' }
@@ -59,7 +59,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
       if (!hasRyanAccount) {
         sound.playBlip();
         setFeedback({
-          text: "CLUE MISSING: You haven't pressed Ryan on where he got the pod yet. Press Ryan in testimony to discover his anonymous Telegram seller admission!",
+          text: "CLUE MISSING: Press Ryan on what supported the assurance and record his reliance on the unknown source.",
           isError: true
         });
         return;
@@ -126,7 +126,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
         onAwardCaseCard();
       }
       setFeedback({
-        text: "★ SOURCE MAP COMPLETE! The illusion of 3 independent confirmations collapses into 1 anonymous Telegram stranger.",
+        text: "★ SOURCE MAP COMPLETE! The illusion of 3 independent confirmations collapses into 1 unverified source.",
         isError: false
       });
     }
@@ -220,7 +220,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
                     “One origin, three voices”
                   </div>
                   <div className="text-xs text-slate-300 font-display">
-                    Noah & Alyssa relied on Ryan &bull; Ryan relied on an anonymous Telegram seller.
+                    Noah & Alyssa relied on Ryan &bull; Ryan relied on one unknown seller.
                   </div>
                 </div>
               </div>
@@ -395,7 +395,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
                   ? 'bg-red-950 text-red-200 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)]' 
                   : 'bg-slate-900 text-slate-600 border-slate-800'
               }`}>
-                UNKNOWN TELEGRAM SELLER (@VaporKush_SG)
+                UNKNOWN SELLER (UNVERIFIED SOURCE)
               </div>
 
               <ArrowDown className={`w-5 h-5 transition-colors ${
@@ -408,7 +408,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
                   ? 'bg-amber-950 text-amber-200 border-amber-500 shadow'
                   : 'bg-slate-900 text-slate-600 border-slate-800'
               }`}>
-                RYAN (Believed anonymous chat bio without verification)
+                RYAN (Accepted one anonymous claim without verification)
               </div>
 
               {/* Split arrows */}
@@ -448,7 +448,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
           <div className="text-xs font-display text-slate-400">
             {isAllCorrect ? (
               <span className="text-emerald-400 font-bold">
-                ✓ Full chain resolved. Present this card in testimony to break Gate #3.
+                ✓ Full chain resolved. Present this card in testimony to break the final gate.
               </span>
             ) : (
               <span>Map all 3 links to reveal the complete source dependency.</span>

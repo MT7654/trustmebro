@@ -52,7 +52,7 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
         initial={{ scale: 0.88, opacity: 0, y: 30 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="w-full max-w-2xl bg-slate-900 border-2 border-yellow-400 text-slate-100 comic-shadow-lg rounded-lg overflow-hidden flex flex-col relative shadow-2xl"
+        className="w-full max-w-5xl min-h-[600px] bg-slate-900 border-2 border-yellow-400 text-slate-100 comic-shadow-lg rounded-[1.5rem] overflow-hidden flex flex-col relative shadow-2xl"
       >
         {/* Flashy Header */}
         <div className="bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 px-4 py-3 border-b-2 border-black flex items-center justify-between">
@@ -112,7 +112,7 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
                 </div>
                 <span className="text-slate-500">+</span>
                 <div className="px-2 py-1 bg-amber-950 border border-amber-500/60 text-amber-200 rounded">
-                  Ryan (Relied on Telegram)
+                  Ryan (Relied on one unknown source)
                 </div>
               </div>
             </div>
@@ -120,22 +120,22 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
         </div>
 
         {/* Character Dialogue Sequence (Visual Novel Cut-Scene) */}
-        <div className="p-4 sm:p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4 flex-1 flex flex-col justify-between">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStepIndex}
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
-              className="flex items-start gap-3 sm:gap-4 bg-slate-950/70 border border-slate-800 rounded-lg p-3 sm:p-4"
+              className="flex items-center gap-5 sm:gap-8 bg-gradient-to-r from-slate-950 via-slate-950/80 to-amber-950/20 rounded-2xl p-4 sm:p-7 min-h-[210px] overflow-hidden"
             >
               <div className="shrink-0">
                 <CharacterIllustration 
                   characterId={currentDialogue.characterId} 
                   playerGender={playerProfile.gender}
                   expression={currentDialogue.expression} 
-                  size="sm"
-                  className="w-14 h-14 sm:w-16 sm:h-16"
+                  size="lg"
+                  className="w-32 h-44 sm:w-44 sm:h-52 -mb-8"
                 />
               </div>
 
@@ -150,7 +150,7 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
                     Step {currentStepIndex + 1} of {dialogueSteps.length}
                   </span>
                 </div>
-                <p className="font-body text-xs sm:text-sm text-slate-200 leading-relaxed">
+                <p className="font-body text-base sm:text-lg text-slate-100 leading-relaxed">
                   {currentDialogue.text.replace(/Player/g, playerProfile.name)}
                 </p>
               </div>

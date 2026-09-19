@@ -334,9 +334,12 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                     const isAlreadyPresented = presentedQuoteIds.includes(quote.id);
 
                     return (
-                      <div
+                      <button
+                        type="button"
                         key={quote.id}
                         id={`evidence-card-${quote.id}`}
+                        aria-pressed={isSelected}
+                        aria-disabled={isAlreadyPresented}
                         onClick={() => {
                           if (isAlreadyPresented) {
                             sound.playShock();
@@ -346,7 +349,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                           onSelectQuote(quote.id);
                           onDismissMismatch();
                         }}
-                        className={`p-4 rounded-xl border transition-all relative ${
+                        className={`w-full p-4 rounded-xl border transition-all relative text-left ${
                           isAlreadyPresented
                             ? 'opacity-40 grayscale border-dashed border-slate-700 bg-slate-950 cursor-not-allowed'
                             : isSelected
@@ -434,7 +437,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                             </span>
                           </div>
                         )}
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -451,14 +454,15 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                 {claims.map((claim, idx) => {
                   const isCurrent = claim.id === activeClaim.id;
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={claim.id}
                       onClick={() => {
                         sound.playClick();
                         onSelectClaim(claim.id);
                         onDismissMismatch();
                       }}
-                      className={`p-3.5 rounded-lg border transition-all cursor-pointer ${
+                      className={`w-full p-3.5 rounded-lg border transition-all cursor-pointer text-left ${
                         isCurrent
                           ? 'bg-slate-900 border-2 border-amber-400 shadow'
                           : 'bg-slate-950 border-slate-800 hover:border-slate-600 hover:bg-slate-900'
@@ -484,7 +488,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                       <p className="mt-2 text-[10px] font-display text-slate-400">
                         {claim.description}
                       </p>
-                    </div>
+                    </button>
                   );
                 })}
               </div>

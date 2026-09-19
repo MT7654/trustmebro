@@ -37,7 +37,7 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
   };
 
   return (
-    <div className="relative w-full h-[140px] sm:h-[155px] md:h-[165px] bg-slate-950 border-2 border-slate-800 rounded-lg overflow-hidden select-none flex flex-col justify-between shadow-xl">
+    <div className="relative w-full h-[280px] md:h-[330px] bg-slate-950 rounded-[1.75rem] overflow-hidden select-none flex flex-col justify-between shadow-2xl ring-1 ring-white/10">
       {/* Background Living Room & Window Layer */}
       <div className={`absolute inset-0 bg-gradient-to-b ${getRoomLighting()} transition-colors duration-700`}>
         {/* City Window Silhouette */}
@@ -86,7 +86,7 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
       </div>
 
       {/* Character Staging (Visual Novel Theater: Active in center, receded friends on sides) */}
-      <div className="relative z-10 flex-1 flex items-end justify-center px-4 sm:px-12 pb-1 gap-6 sm:gap-14">
+      <div className="relative z-10 flex-1 flex items-end justify-center px-4 sm:px-12 pb-2 gap-8 sm:gap-24">
         {/* Left Character: Noah */}
         <button
           id="room-select-noah"
@@ -96,13 +96,13 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
           }}
           className={`relative flex flex-col items-center transition-all cursor-pointer ${
             selectedCharacterId === 'noah'
-              ? 'scale-105 z-20 opacity-100'
-              : 'scale-85 z-10 opacity-60 hover:opacity-90 hover:scale-90'
+              ? 'scale-125 z-20 opacity-100 -translate-y-2'
+              : 'scale-90 z-10 opacity-55 hover:opacity-90 hover:scale-95'
           }`}
           title="Speak to Noah"
         >
           <div className="relative">
-            <CharacterIllustration characterId="noah" expression={characters.noah.currentExpression} size="sm" />
+            <CharacterIllustration characterId="noah" expression={characters.noah.currentExpression} size="lg" className="h-52 w-40" />
             {selectedCharacterId === 'noah' && (
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 bg-emerald-500 text-black text-[8px] font-display font-black uppercase rounded shadow">
                 ACTIVE
@@ -123,13 +123,13 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
           }}
           className={`relative flex flex-col items-center transition-all cursor-pointer ${
             selectedCharacterId === 'ryan'
-              ? 'scale-110 z-20 opacity-100'
-              : 'scale-85 z-10 opacity-60 hover:opacity-90 hover:scale-90'
+              ? 'scale-125 z-20 opacity-100 -translate-y-2'
+              : 'scale-90 z-10 opacity-55 hover:opacity-90 hover:scale-95'
           }`}
           title="Speak to Ryan"
         >
           <div className="relative">
-            <CharacterIllustration characterId="ryan" expression={characters.ryan.currentExpression} size="sm" />
+            <CharacterIllustration characterId="ryan" expression={characters.ryan.currentExpression} size="lg" className="h-52 w-40" />
             {selectedCharacterId === 'ryan' && (
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 bg-amber-400 text-black text-[8px] font-display font-black uppercase rounded shadow">
                 ACTIVE
@@ -150,13 +150,13 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
           }}
           className={`relative flex flex-col items-center transition-all cursor-pointer ${
             selectedCharacterId === 'alyssa'
-              ? 'scale-105 z-20 opacity-100'
-              : 'scale-85 z-10 opacity-60 hover:opacity-90 hover:scale-90'
+              ? 'scale-125 z-20 opacity-100 -translate-y-2'
+              : 'scale-90 z-10 opacity-55 hover:opacity-90 hover:scale-95'
           }`}
           title="Speak to Alyssa"
         >
           <div className="relative">
-            <CharacterIllustration characterId="alyssa" expression={characters.alyssa.currentExpression} size="sm" />
+            <CharacterIllustration characterId="alyssa" expression={characters.alyssa.currentExpression} size="lg" className="h-52 w-40" />
             {selectedCharacterId === 'alyssa' && (
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 bg-purple-400 text-black text-[8px] font-display font-black uppercase rounded shadow">
                 ACTIVE

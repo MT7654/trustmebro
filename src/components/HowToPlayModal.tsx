@@ -83,7 +83,7 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
             </div>
             <ul className="text-xs text-slate-300 font-body space-y-1.5 pl-8 list-disc">
               <li>
-                <strong className="text-amber-300">Inspect Physical & Digital Objects:</strong> Rotate the box on the table, open it, and inspect Ryan's phone Telegram chat to gather objective observations.
+                <strong className="text-amber-300">Inspect Physical & Digital Objects:</strong> Practise on the speaker, then examine the sealed box and Ryan's message history for objective observations.
               </li>
               <li>
                 <strong className="text-amber-300">Question the Room:</strong> Talk to Ryan, Alyssa, and Noah to collect their verbatim accounts and identify where their confidence comes from.

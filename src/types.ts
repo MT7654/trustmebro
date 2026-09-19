@@ -138,7 +138,6 @@ export interface GameEnding {
   subtitle: string;
   badge: string;
   badgeColor: string;
-  grade: 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
   narrativeText: string;
   extendedSourceChain?: {
     seller: string;
@@ -157,11 +156,10 @@ export interface GameEnding {
 export type TutorialStep = 
   | 'none'
   | 'structure_overview'
-  | 'investigation_select_box'
-  | 'investigation_rotate_box'
-  | 'investigation_click_point'
-  | 'investigation_open_box'
-  | 'investigation_record_clue'
+  | 'investigation_select_speaker'
+  | 'investigation_rotate_speaker'
+  | 'investigation_find_volume'
+  | 'investigation_lower_volume'
   | 'investigation_completed'
   | 'crossexam_press_statement'
   | 'crossexam_pin_sentence'

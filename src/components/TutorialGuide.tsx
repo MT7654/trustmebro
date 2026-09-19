@@ -21,44 +21,36 @@ interface StepConfig {
 }
 
 const STEP_CONFIGS: Record<string, StepConfig> = {
-  investigation_select_box: {
+  investigation_select_speaker: {
     segment: 'INVESTIGATION TUTORIAL',
     stepNumber: 1,
-    totalSteps: 5,
-    instruction: 'Select the Packaging Box on the coffee table to begin physical inspection.',
-    hint: 'Hint: Click the yellow "Packaging Box" button on the glass coffee table in front of Ryan.',
+    totalSteps: 4,
+    instruction: 'The music is too loud. Select the portable speaker on the coffee table.',
+    hint: 'Hint: Choose the glowing portable speaker near the centre of the table.',
     badgeColor: 'bg-amber-400 text-slate-950'
   },
-  investigation_rotate_box: {
+  investigation_rotate_speaker: {
     segment: 'INVESTIGATION TUTORIAL',
     stepNumber: 2,
-    totalSteps: 5,
-    instruction: 'Rotate the box by dragging left/right or clicking the arrow controls to view all angles.',
-    hint: 'Hint: Click the left or right arrow buttons below the box preview to switch sides.',
+    totalSteps: 4,
+    instruction: 'Rotate the speaker by dragging, swiping, using arrows, or pressing A/D.',
+    hint: 'Hint: The volume control is on another side.',
     badgeColor: 'bg-amber-400 text-slate-950'
   },
-  investigation_click_point: {
+  investigation_find_volume: {
     segment: 'INVESTIGATION TUTORIAL',
     stepNumber: 3,
-    totalSteps: 5,
-    instruction: 'Click an inspection area (e.g. Front Face, Side Panel, or Tamper Seal) to examine details.',
-    hint: 'Hint: Click one of the highlighted inspection buttons on the left, such as "Front Face" or "Left Panel".',
+    totalSteps: 4,
+    instruction: 'Locate and select the volume control on the back.',
+    hint: 'Hint: Rotate to view 3 of 3, then select the circular dial.',
     badgeColor: 'bg-amber-400 text-slate-950'
   },
-  investigation_open_box: {
+  investigation_lower_volume: {
     segment: 'INVESTIGATION TUTORIAL',
     stepNumber: 4,
-    totalSteps: 5,
-    instruction: 'Click "Break Tamper Seal & Open Box" to inspect the interior contents.',
-    hint: 'Hint: Click the yellow "Break Tamper Seal & Open Box" button inside the inspection view.',
-    badgeColor: 'bg-amber-400 text-slate-950'
-  },
-  investigation_record_clue: {
-    segment: 'INVESTIGATION TUTORIAL',
-    stepNumber: 5,
-    totalSteps: 5,
-    instruction: 'You\'ve identified an observation! Click "Record Clue in Case File" to save this evidence.',
-    hint: 'Hint: Click the yellow "Record Clue in Case File" button at the bottom of the modal.',
+    totalSteps: 4,
+    instruction: 'Turn the music down so the group can hear one another.',
+    hint: 'Hint: Use the highlighted Turn music down control.',
     badgeColor: 'bg-amber-400 text-slate-950'
   },
   crossexam_press_statement: {

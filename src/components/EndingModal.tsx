@@ -23,7 +23,7 @@ export const EndingModal: React.FC<EndingModalProps> = ({
 
   useEffect(() => {
     if (!ending) return;
-    if (ending.grade === 'S') {
+    if (ending.type === 'BREAK_THE_CHAIN') {
       sound.playVictory();
       try {
         confetti({
@@ -34,7 +34,7 @@ export const EndingModal: React.FC<EndingModalProps> = ({
       } catch {
         // Ignore if canvas-confetti is not available
       }
-    } else if (ending.grade === 'F') {
+    } else if (ending.type === 'THE_NEXT_VOICE') {
       sound.playBuzzer();
     } else {
       sound.playDramaticHit();
@@ -44,7 +44,7 @@ export const EndingModal: React.FC<EndingModalProps> = ({
   if (!ending) return null;
 
   const handleCopyNotes = () => {
-    const text = `TRUST ME BRO: Case Result [${ending.grade}-Rank]
+    const text = `TRUST ME BRO: Case Result
 Outcome: ${ending.title} - ${ending.subtitle}
 Core Lesson: ${ending.educationalDebrief.actionableTakeaway}
 Singapore Context: ${ending.educationalDebrief.realWorldContext}`;
@@ -63,23 +63,12 @@ Singapore Context: ${ending.educationalDebrief.realWorldContext}`;
         animate={{ scale: 1, opacity: 1, y: 0 }}
         className="w-full max-w-4xl bg-slate-900 border border-slate-700 text-slate-100 rounded-xl shadow-2xl overflow-hidden my-auto"
       >
-        {/* Top Grade & Banner */}
+        {/* Outcome banner */}
         <div className="bg-slate-950 text-white p-5 sm:p-6 border-b border-slate-800 relative overflow-hidden">
           <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-4">
-              {/* Grade Stamp */}
-              <div
-                className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center font-heading text-3xl sm:text-4xl font-black shadow-lg ${
-                  ending.grade === 'S'
-                    ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/20'
-                    : ending.grade === 'A'
-                    ? 'bg-cyan-500 text-slate-950 shadow-cyan-500/20'
-                    : ending.grade === 'C'
-                    ? 'bg-amber-400 text-slate-950 shadow-amber-400/20'
-                    : 'bg-rose-600 text-white shadow-rose-600/20'
-                }`}
-              >
-                {ending.grade}
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-lg ${ending.badgeColor}`}>
+                <Network className="h-7 w-7" />
               </div>
 
               <div>
@@ -98,9 +87,17 @@ Singapore Context: ${ending.educationalDebrief.realWorldContext}`;
         </div>
 
         {/* Narrative Outcome Text */}
-        <div className="p-4 sm:p-6 space-y-5 max-h-[62vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-5 max-h-[68vh] overflow-y-auto">
+          <div className="relative h-36 overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-950/50 via-slate-950 to-purple-950/50 ring-1 ring-white/10">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(251,191,36,.16),transparent_55%)]" />
+            <div className="relative flex h-full items-end justify-center gap-8 sm:gap-16">
+              <CharacterIllustration characterId="noah" expression={ending.type === 'BREAK_THE_CHAIN' ? 'worried' : 'neutral'} size="md" className="h-28 w-24 opacity-80" />
+              <CharacterIllustration characterId="ryan" expression={ending.type === 'BREAK_THE_CHAIN' ? 'worried' : ending.type === 'RIGHT_BUT_ALONE' ? 'defensive' : 'shocked'} size="md" className="h-36 w-28" />
+              <CharacterIllustration characterId="alyssa" expression={ending.type === 'BREAK_THE_CHAIN' ? 'worried' : 'skeptical'} size="md" className="h-28 w-24 opacity-80" />
+            </div>
+          </div>
           {/* Narrative Log */}
-          <div className="bg-slate-950 border border-slate-800 rounded-lg p-4 sm:p-5 relative">
+          <div className="bg-slate-950/60 rounded-2xl p-4 sm:p-6 relative">
             <div className="text-[10px] font-display uppercase tracking-widest text-amber-400 mb-2 flex items-center gap-1.5 font-bold">
               <Flame className="w-3.5 h-3.5 text-amber-400" />
               CASE RESOLUTION: HOW THE NIGHT UNFOLDED

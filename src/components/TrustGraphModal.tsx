@@ -101,7 +101,7 @@ export const TrustGraphModal: React.FC<TrustGraphModalProps> = ({
               </h3>
               <p className="font-body text-xs text-neutral-300 leading-relaxed mb-3">
                 {canObject
-                  ? "Every single person in this room was relying on Ryan, who relied on an anonymous Telegram stranger. There are zero independent verifications."
+                  ? "Every person in this room was relying on Ryan, who relied on one anonymous seller. There are zero independent verifications."
                   : `Contradictions unmasked: ${solvedClaimsCount} of ${claims.length}. Pin claims and present quotes to expose the chain.`}
               </p>
               <div className="flex items-center gap-2 text-xs font-display bg-yellow-950/60 border border-yellow-700 px-3 py-1.5 text-yellow-300">
@@ -179,7 +179,7 @@ export const TrustGraphModal: React.FC<TrustGraphModalProps> = ({
                 {ryanClaim?.isCorrected ? (
                   <div className="mt-2 text-xs font-body text-emerald-200 pl-8 space-y-1">
                     <p className="line-through text-neutral-400">VERIFIED SELLER</p>
-                    <p className="text-emerald-300 font-semibold">→ ANONYMOUS TELEGRAM STRANGER (@VaporKush_SG) left in an HDB stairwell.</p>
+                    <p className="text-emerald-300 font-semibold">→ ANONYMOUS, UNACCOUNTABLE SELLER with no independent verification.</p>
                   </div>
                 ) : (
                   <p className="mt-2 text-xs font-body text-neutral-400 pl-8">
@@ -200,7 +200,7 @@ export const TrustGraphModal: React.FC<TrustGraphModalProps> = ({
                   ★ THE CIRCULAR LOOP IS COMPLETELY UNMASKED ★
                 </div>
                 <p className="font-body text-xs sm:text-sm text-neutral-200 max-w-xl mx-auto leading-relaxed">
-                  Noah relied on Alyssa. Alyssa relied on Ryan. Ryan relied on an anonymous stranger on Telegram.
+                  Noah relied on Alyssa. Alyssa relied on Ryan. Ryan relied on one anonymous seller.
                   <strong> The entire room is taking a chemical gamble on zero verifiable facts.</strong>
                 </p>
               </motion.div>
