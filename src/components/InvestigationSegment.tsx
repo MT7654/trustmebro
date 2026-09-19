@@ -27,7 +27,7 @@ import { BoxAndPodInspectionModal } from './inspection/BoxAndPodInspectionModal'
 import { PhoneInspectionModal } from './inspection/PhoneInspectionModal';
 import { CharacterQuestionModal } from './inspection/CharacterQuestionModal';
 import { SpeakerTutorialModal } from './inspection/SpeakerTutorialModal';
-import { isInvestigationReady } from '../gameRules';
+import { isInvestigationReady, REQUIRED_INVESTIGATION_EVIDENCE_IDS } from '../gameRules';
 
 interface InvestigationSegmentProps {
   characters: Record<string, Character>;
@@ -59,7 +59,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
   const [isSpeakerOpen, setIsSpeakerOpen] = useState(false);
 
   const inspectedIds = collectedEvidence.map(e => e.id);
-  const essentialCount = collectedEvidence.length;
+  const essentialCount = REQUIRED_INVESTIGATION_EVIDENCE_IDS.filter(id => inspectedIds.includes(id)).length;
   const isReadyToConfront = isInvestigationReady(inspectedIds);
 
   const handleOpenHotspot = (hotspot: InvestigationHotspot) => {
@@ -86,14 +86,14 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
                 SEGMENT 1: INVESTIGATION
               </span>
               <span className="text-xs text-slate-400 font-mono">
-                {essentialCount}/5 Proof Items Discovered
+                {essentialCount}/{REQUIRED_INVESTIGATION_EVIDENCE_IDS.length} Decisive Clues
               </span>
             </div>
             <h2 className="text-base sm:text-lg font-heading font-black text-slate-100 mt-1">
               Objective: Find out what everyone is relying on.
             </h2>
             <p className="text-xs text-slate-300 font-body">
-              Explore the room from your seat. Inspect objects on the table and question Ryan, Alyssa, and Noah to uncover what they treat as confirmation.
+              Trace four decisive clues: the sealed box, Alyssa's assumption, Noah's reliance, and Ryan's seller chat.
             </p>
           </div>
         </div>
@@ -192,7 +192,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
                 )}
               </div>
               <div className="mt-1 px-2.5 py-0.5 bg-slate-900/90 border border-slate-700 group-hover:border-amber-400 rounded text-[11px] font-display font-bold text-amber-300 transition-colors">
-                Ryan (Holding Vape)
+                Ryan (Host · Optional)
               </div>
             </motion.button>
 
@@ -268,29 +268,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
               </div>
             </motion.button>
 
-            {/* Object Hotspot 2: Vape Cartridge Pod */}
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => handleOpenHotspot(hotspots.find(h => h.id === 'vape_pod')!)}
-              className={`flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded border transition-all cursor-pointer shrink-0 ${
-                inspectedIds.includes('item_unmarked_foil_pod')
-                  ? 'bg-slate-800/80 border-slate-700 text-slate-300'
-                  : 'bg-amber-950/60 hover:bg-amber-900/80 border-amber-500 text-amber-200 shadow-[0_0_12px_rgba(245,158,11,0.25)]'
-              }`}
-            >
-              <Eye className="w-4 h-4 text-amber-400 shrink-0" />
-              <div className="text-left">
-                <div className="text-[10px] sm:text-[11px] font-display font-black uppercase">
-                  Vape Cartridge Pod
-                </div>
-                <div className="text-[9px] text-slate-400">
-                  {inspectedIds.includes('item_unmarked_foil_pod') ? '✓ Examined' : 'Examine pod hardware'}
-                </div>
-              </div>
-            </motion.button>
-
-            {/* Object Hotspot 3: Ryan's seller chat */}
+            {/* Object Hotspot 2: Ryan's seller chat */}
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
@@ -343,7 +321,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
                 ✓ Ready to confront the room
               </span>
             ) : (
-              <span>Need {Math.max(0, 4 - essentialCount)} more clue{4 - essentialCount > 1 ? 's' : ''} to confront</span>
+              <span>Need {Math.max(0, REQUIRED_INVESTIGATION_EVIDENCE_IDS.length - essentialCount)} more clue{REQUIRED_INVESTIGATION_EVIDENCE_IDS.length - essentialCount !== 1 ? 's' : ''} to confront</span>
             )}
           </div>
         </div>

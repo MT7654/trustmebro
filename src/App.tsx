@@ -38,7 +38,7 @@ import { LostExchangeModal } from './components/LostExchangeModal';
 import { StructureOverviewModal } from './components/StructureOverviewModal';
 import { HowToPlayModal } from './components/HowToPlayModal';
 import { TutorialGuide } from './components/TutorialGuide';
-import { canAddObjectToEvidenceInventory } from './gameRules';
+import { canAddObjectToEvidenceInventory, getInvestigationClueLesson, REQUIRED_INVESTIGATION_EVIDENCE_IDS } from './gameRules';
 import { sound } from './utils/sound';
 import { AlertTriangle, Network, ShieldCheck, Flame, Info, Sparkles, Pin, Bookmark, Quote, Swords } from 'lucide-react';
 
@@ -79,6 +79,8 @@ export default function App() {
   const [activeBreakthrough, setActiveBreakthrough] = useState<{ claim: PinnedClaim } | null>(null);
   const [isAhaCutInActive, setIsAhaCutInActive] = useState<boolean>(false);
   const [cutInCustomText, setCutInCustomText] = useState<string>('AHA!');
+  const [cutInSubtitle, setCutInSubtitle] = useState<string | undefined>(undefined);
+  const [cutInVariant, setCutInVariant] = useState<'breakthrough' | 'clue'>('breakthrough');
   const [activeEnding, setActiveEnding] = useState<GameEnding | null>(null);
   const [isTrustGraphOpen, setIsTrustGraphOpen] = useState<boolean>(false);
   const [isBriefingOpen, setIsBriefingOpen] = useState<boolean>(false);
@@ -91,6 +93,7 @@ export default function App() {
   // Handle collecting evidence during the Investigation segment
   const handleCollectInvestigationEvidence = (quote: EvidenceQuote) => {
     if (!canAddObjectToEvidenceInventory(quote.id)) return;
+    const clueLesson = getInvestigationClueLesson(quote.id, collectedQuotes.map(item => item.id));
     sound.playPaperSlide();
     setCollectedQuotes(prev => {
       if (prev.some(q => q.id === quote.id)) return prev;
@@ -99,12 +102,21 @@ export default function App() {
     setHotspots(prev =>
       prev.map(h => (h.evidenceId === quote.id ? { ...h, isInspected: true } : h))
     );
+
+    if (clueLesson) {
+      setCutInCustomText('AHA!');
+      setCutInSubtitle(clueLesson);
+      setCutInVariant('clue');
+      setIsAhaCutInActive(true);
+    }
   };
 
   // Handle proceeding from Investigation to Cross-Examination
   const handleProceedToCrossExam = () => {
     sound.playObjection();
     setCutInCustomText('CONFRONT THE GROUP!');
+    setCutInSubtitle('THE ROOM IS READY TO HEAR THE EVIDENCE');
+    setCutInVariant('breakthrough');
     setIsAhaCutInActive(true);
     setGameState('crossexam');
     setSelectedCharacterId('ryan');
@@ -213,6 +225,8 @@ export default function App() {
 
       // Trigger "AHA!" / "OBJECTION!" cut-in animation
       setCutInCustomText('AHA!');
+      setCutInSubtitle('CIRCULAR TRUST LOOP DETECTED');
+      setCutInVariant('breakthrough');
       setIsAhaCutInActive(true);
 
       // Change character expression to shocked/defensive
@@ -281,6 +295,8 @@ export default function App() {
     if (nextUnsolved) {
       setActiveClaimId(nextUnsolved.id);
       setSelectedCharacterId(nextUnsolved.speakerId);
+      const preparedEvidence = collectedQuotes.find(quote => nextUnsolved.targetQuoteIds.includes(quote.id));
+      setSelectedQuoteId(preparedEvidence?.id || null);
     }
   };
 
@@ -423,7 +439,7 @@ export default function App() {
         isReducedMotion={isReducedMotion}
         onToggleReducedMotion={handleToggleReducedMotion}
         discoveredCluesCount={gameState === 'investigation' ? collectedQuotes.length : solvedCount}
-        totalClues={gameState === 'investigation' ? hotspots.length : pinnedClaims.length}
+        totalClues={gameState === 'investigation' ? REQUIRED_INVESTIGATION_EVIDENCE_IDS.length : pinnedClaims.length}
         canObject={canBreakLoop}
       />
 
@@ -555,6 +571,9 @@ export default function App() {
       <AhaCutIn
         isOpen={isAhaCutInActive}
         customText={cutInCustomText}
+        subtitle={cutInSubtitle}
+        variant={cutInVariant}
+        isReducedMotion={isReducedMotion}
         onComplete={() => setIsAhaCutInActive(false)}
       />
 

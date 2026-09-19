@@ -59,31 +59,19 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
         speaker: 'Player',
         characterId: 'player',
         expression: 'skeptical',
-        text: `“Hold on, Ryan! You're pointing to the glossy box and sleek plastic pod, saying it 'looks normal'. But look at what physical inspection actually revealed!”`
-      },
-      {
-        speaker: 'Player',
-        characterId: 'player',
-        expression: 'skeptical',
-        text: `“The tamper seal was already sliced, the compliance serial box is completely blank, and there is zero laboratory batch verification on the cartridge!”`
+        text: `“The box looks commercial, but its seal is sliced and its verification fields are blank. Appearance cannot tell us what is inside.”`
       },
       {
         speaker: 'Noah',
         characterId: 'noah',
         expression: 'alarmed',
-        text: `“Wait... so the hardware still tells us nothing about what is inside this specific device?”`
-      },
-      {
-        speaker: 'Ryan',
-        characterId: 'ryan',
-        expression: 'shocked',
-        text: `“Whoa... I honestly just thought because the box had pretty pastel printing and plastic foil, it was a real factory brand. I never checked the batch serial panel...”`
+        text: `“So looking normal is not the same as being verified?”`
       },
       {
         speaker: 'Player',
         characterId: 'player',
         expression: 'neutral',
-        text: `“Exactly. Standard hardware appearance tells us nothing about the chemical liquid inside. The contents remain completely unknown.”`
+        text: `“Exactly. Packaging can be copied. The contents remain unknown, so the safe choice is not to use it.”`
       }
     ]
   },
@@ -113,25 +101,19 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
         speaker: 'Player',
         characterId: 'player',
         expression: 'skeptical',
-        text: `“Hold on, Noah! You just told us Alyssa 'checked what was inside.' But look at what Alyssa actually said!”`
+        text: `“Noah, Alyssa did not check it. She only tried it after trusting Ryan.”`
       },
       {
         speaker: 'Alyssa',
         characterId: 'alyssa',
         expression: 'worried',
-        text: `“Wait... Noah, why did you say I checked it? I didn't test the liquid! Ryan handed it to me and said it was sweet peach, so I just took two puffs!”`
-      },
-      {
-        speaker: 'Noah',
-        characterId: 'noah',
-        expression: 'shocked',
-        text: `“Wait, you didn't check?! I thought because you took a hit and said 'it's fine', you actually knew what was in the cartridge!”`
+        text: `“I never tested anything. Taking a puff exposed me to it; it did not verify it.”`
       },
       {
         speaker: 'Player',
         characterId: 'player',
         expression: 'skeptical',
-        text: `“See? Alyssa never 'checked' the chemical contents. She only TRIED it because she assumed Ryan verified it!”`
+        text: `“Feeling fine right away cannot prove safety. Trying is not testing.”`
       }
     ]
   },
@@ -160,31 +142,19 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
         speaker: 'Player',
         characterId: 'player',
         expression: 'skeptical',
-        text: `“Alyssa, you said you felt safe because you thought Ryan checked this pod himself. But look at Ryan's direct messages with the seller!”`
+        text: `“Alyssa, Ryan did not test this device. His only support is the seller's own message.”`
       },
       {
         speaker: 'Ryan',
         characterId: 'ryan',
         expression: 'defensive',
-        text: `“Look, guys... I asked him if the batch was tested, and he just texted back: '100% normal bro trust me'. He showed me no lab test or chemical sheet at all!”`
-      },
-      {
-        speaker: 'Alyssa',
-        characterId: 'alyssa',
-        expression: 'shocked',
-        text: `“Wait... Ryan?! You didn't check anything at all?! You just accepted a stranger's message?”`
-      },
-      {
-        speaker: 'Noah',
-        characterId: 'noah',
-        expression: 'alarmed',
-        text: `“Hold on... so Alyssa trusted Ryan, and Ryan only trusted what an unknown seller typed in a chat?!”`
+        text: `“I asked, but all I got was reassurance. No test, no independent record.”`
       },
       {
         speaker: 'Player',
         characterId: 'player',
         expression: 'skeptical',
-        text: `“Exactly. Alyssa didn't verify anything because she trusted Ryan. And Ryan verified nothing because he trusted the seller!”`
+        text: `“A seller repeating their own claim is not independent verification. Confidence changed hands; evidence never did.”`
       }
     ]
   },
@@ -214,43 +184,19 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
         speaker: 'Player',
         characterId: 'player',
         expression: 'skeptical',
-        text: `“Ryan, you keep arguing: 'That's three separate confirmations.' But look at the completed source map!”`
-      },
-      {
-        speaker: 'Player',
-        characterId: 'player',
-        expression: 'skeptical',
-        text: `“Noah relied on you. Alyssa relied on you. And you relied on one unknown seller. THREE CHECKS collapse into ONE UNKNOWN CLAIM!”`
+        text: `“Noah relied on you. Alyssa relied on you. You relied on one unknown seller. Three voices collapse into one unverified claim.”`
       },
       {
         speaker: 'Noah',
         characterId: 'noah',
         expression: 'shocked',
-        text: `“Wait... he's totally right! I only backed it because I trusted Ryan. Alyssa only tried it because she trusted Ryan. None of us added a single piece of independent proof!”`
-      },
-      {
-        speaker: 'Alyssa',
-        characterId: 'alyssa',
-        expression: 'worried',
-        text: `“And Ryan only trusted a stranger's chat message! That's not three separate confirmations... that's just Ryan passing along what an unknown seller told him!”`
-      },
-      {
-        speaker: 'Ryan',
-        characterId: 'ryan',
-        expression: 'defensive',
-        text: `“Wait... guys, don't look at me like that! I wasn't trying to trick anyone! I swear I thought I was bringing something chill for all of us. I didn't think about it like that... I thought 'my guy' was legit...”`
+        text: `“I only repeated Ryan's confidence. I never added proof of my own.”`
       },
       {
         speaker: 'Player',
         characterId: 'player',
         expression: 'neutral',
-        text: `“We're not saying you meant any harm, Ryan. We don't know what is inside, and nothing we observed can settle that. The truth is: NOBODY in this room actually knows.”`
-      },
-      {
-        speaker: 'Ryan',
-        characterId: 'ryan',
-        expression: 'alarmed',
-        text: `“...Man. When you lay it out like that... none of us has any clue what's inside this thing.”`
+        text: `“Nobody here can verify what is inside. We do not need to guess the contents to refuse the risk: don't use it, and help the group step back.”`
       }
     ]
   }
@@ -548,8 +494,8 @@ export const TESTIMONY_STEPS: Record<string, TestimonyStep> = {
 export const FINAL_RESPONSE_OPTIONS: FinalResponseOption[] = [
   {
     id: 'BREAK_THE_CHAIN',
-    promptText: 'Explain that everyone repeated the same seller\'s word and nobody can verify what is inside.',
-    subtext: 'Calmly reveal the single unverified origin without attacking anyone in the room.',
+    promptText: '“None of us can verify what is inside. Repeating one seller’s claim does not make it safe. I’m not using it—and we should all step back.”',
+    subtext: 'Refuse calmly, expose the single unverified origin, and help the group disengage without attacking Ryan.',
     leadsToTitle: 'Break the Chain'
   },
   {
@@ -614,22 +560,11 @@ The device goes back into Ryan's bag, unused. Its contents remain unknown. You c
     subtitle: 'You made the correct argument, but attacked Ryan personally and polarized the room.',
     badge: 'DEFENSIVE BACKLASH',
     badgeColor: 'bg-amber-500 text-black',
-    narrativeText: `You identify the unverified seller, but you direct your frustration squarely at Ryan:
+    narrativeText: `You expose the unverified chain, then turn it into a personal attack on Ryan.
 
-“Are you an idiot, Ryan? You trusted a stranger and brought this here to push onto your friends! What kind of reckless person does that?!”
+Ryan stops listening. Noah and Alyssa move to defend their friend instead of examining the evidence. Your logic was sound, but humiliation made the room protect Ryan's dignity rather than reconsider the risk.
 
-Ryan’s face turns bright red with humiliated fury:
-“Poison you?! Bro, I paid for this out of my own pocket to share on a chill weekend, and you’re calling me a criminal dealer in front of everyone?! You think I want to hurt my own friends?!”
-
-Noah steps up, physically placing himself between you and Ryan:
-“Bro, chill out. You don’t have to insult him like that. If you don’t want it, just say no. Why are you acting like a self-righteous cop?”
-
-Alyssa folds her arms, turning away from you:
-“Yeah, Ryan was just trying to be nice. There’s no need to be toxic.”
-
-Even though your underlying logic about the anonymous seller was completely correct, your aggressive delivery backed Ryan into an ego trap. To save face in front of the group, Ryan picks up the vape and defiantly takes another hit.
-
-You were right about the chain, but your attack forced the group to defend Ryan, leaving them at risk.`,
+The device remains on the table and the contents remain unknown. A safer intervention attacks the missing verification—not the person.`,
     extendedSourceChain: {
       seller: 'Unknown Seller (unverified source)',
       ryan: 'Ryan (Defensively doubling down to save face)',
@@ -650,22 +585,11 @@ You were right about the chain, but your attack forced the group to defend Ryan,
     subtitle: 'You tried to verify safety by asking the unverified seller to confirm their own claim.',
     badge: 'CIRCULAR VALIDATION',
     badgeColor: 'bg-orange-500 text-white',
-    narrativeText: `You hesitate and say to Ryan:
-“Can you message that seller right now and ask if they can guarantee this batch is safe?”
+    narrativeText: `You ask Ryan to check with the same unknown seller again.
 
-Ryan pulls out his phone: “Easy bro, I’ll text him right now.”
+Another confident reply arrives, but it adds no independent evidence. The group hears repetition as confirmation and relaxes.
 
-Thirty seconds later, Ryan turns his screen around, showing another response from UNKNOWN SELLER:
-“Bro 100% authentic peach flavour, fresh import, zero funny stuff. Super clean boss, trust me.”
-
-Ryan grins triumphantly: “See? I literally just double-checked with him directly. He confirmed it. What else do you need?”
-
-Noah nods in relief: “Nice, thanks for checking, Ryan. That settles it.”
-Alyssa smiles: “See? Totally fine.”
-
-By asking the unknown seller to verify his own product, you sought reassurance from the exact party with the strongest financial motive to lie. An anonymous black-market peddler has zero legal accountability and will never say 'actually, this batch might be contaminated.'
-
-Instead of breaking the illusion, you gave the group a false sense of security that reinforced the loop.`,
+The device is still unverified and its contents remain unknown. Re-asking the original source does not create a second check; it only strengthens the same unsupported claim.`,
     extendedSourceChain: {
       seller: 'Unknown Seller (Vouches for their own unverified claim)',
       ryan: 'Ryan (Takes seller\'s repeated text as double proof)',
@@ -686,22 +610,11 @@ Instead of breaking the illusion, you gave the group a false sense of security t
     subtitle: 'You claimed certainty without proof, giving the group an easy way to dismiss your warning.',
     badge: 'EASY DISMISSAL',
     badgeColor: 'bg-amber-600 text-white',
-    narrativeText: `Instead of focusing on the fact that nobody knows what's inside, you make an unproven assertion:
+    narrativeText: `You claim to know exactly what the device contains.
 
-“This definitely contains a dangerous drug. I know it does!”
+Ryan challenges you to prove it. You cannot—and the room uses that overclaim to dismiss the concern entirely.
 
-Ryan stares at you in disbelief, then laughs:
-“Bro, what on earth are you talking about? Are you hallucinating? Alyssa literally took two puffs ten minutes ago and she’s sitting right there laughing at cat videos. Where are the drugs?!”
-
-Noah shakes his head:
-“Dude, you're being completely paranoid. If it had horse tranquilizers or whatever crazy thing you're imagining, Alyssa would be passed out on the floor. You're just making wild guesses.”
-
-Alyssa giggles:
-“Yeah, I just taste sweet peach. You're overthinking it, bro.”
-
-By claiming certainty on something you couldn't prove, you handed them an easy counter-argument. Because Alyssa didn't immediately show extreme symptoms, the group used her current state to 'disprove' your claim and dismiss you entirely.
-
-The real hazard—that illicit vapes have zero quality standards and unpredictable chemical contents—was lost beneath your ungrounded speculation.`,
+You never needed to identify the substance. The accurate message was stronger: nobody can verify what is inside, and appearance or immediate effects cannot establish safety. Uncertainty is already enough reason to refuse.`,
     extendedSourceChain: {
       seller: 'Unknown Seller (unverified source)',
       ryan: 'Ryan (Dismisses your warning as hysteria)',
@@ -722,31 +635,11 @@ The real hazard—that illicit vapes have zero quality standards and unpredictab
     subtitle: 'You yielded to apparent confidence. Your survival became the next reassurance in the chain.',
     badge: 'THE UNBROKEN CHAIN',
     badgeColor: 'bg-rose-700 text-white',
-    narrativeText: `You look at Noah’s calm expression, Ryan’s easy smile, and Alyssa relaxing on the sofa.
+    narrativeText: `You accept the room's confidence and become another voice saying it seemed fine.
 
-“Well... Alyssa seems completely fine, and everyone else is sure. I guess one puff won’t hurt.”
+Nothing you observe in the moment verifies the contents or future risk. Later, another friend treats your experience as proof for a different unverified device.
 
-You take the device from Ryan and inhale. The vapor is warm, tasting heavily of artificial peach and sweetener. You sit waiting for something bad to happen, your heart racing for a few minutes.
-
-Nothing obvious happens before the night ends.
-
-The gathering continues casually. You split some pizza, watch videos, and pack up around midnight feeling slightly fatigued. The contents of that pod remain completely unresolved—whether ordinary illicit juice, diluted nicotine, or variable additives, you will never know.
-
----
-
-Two weeks later, you are at Leo’s apartment with Chloe. Chloe produces a different unbranded cartridge from another unverified source.
-
-Leo hesitates, looking nervous: “Wait... is that thing actually safe? I’ve heard weird stuff about black-market pods lately.”
-
-Chloe glances at you:
-“Hey, didn't you try Ryan’s peach pod the other weekend? You were totally fine, right?”
-
-All eyes turn to you. You shrug and reply:
-“Yeah... I tried it. It was fine.”
-
-Leo relaxes his shoulders: “Oh, okay. If you tried it and were fine, then pass it over.”
-
-You didn't verify anything. You didn't know what was in Ryan's pod, and you know even less about Chloe's. But your simple survival just became the next link of unearned reassurance, passing the blind gamble forward to another friend.`,
+The chain grows because “I seemed fine” sounds reassuring. It is not evidence. Refusing an unknown device—and refusing to endorse it for someone else—breaks that chain.`,
     extendedSourceChain: {
       seller: 'Unknown Seller (unverified source)',
       ryan: 'Ryan (Offered pod based on text message)',

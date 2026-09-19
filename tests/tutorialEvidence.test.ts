@@ -6,12 +6,20 @@ import {
   TUTORIAL_OBJECT_ID,
   canResolveAppearanceGate,
   isInvestigationReady,
-  canAddObjectToEvidenceInventory
+  canAddObjectToEvidenceInventory,
+  getInvestigationClueLesson
 } from '../src/gameRules.ts';
 
 test('portable speaker is practice-only and never enters the evidence catalogue', () => {
   assert.equal(canAddObjectToEvidenceInventory(TUTORIAL_OBJECT_ID), false);
   assert.equal(REQUIRED_INVESTIGATION_EVIDENCE_IDS.includes(TUTORIAL_OBJECT_ID as never), false);
+});
+
+test('new investigation evidence triggers an Aha lesson, while practice and repeat interactions do not', () => {
+  assert.equal(getInvestigationClueLesson(CRITICAL_BOX_EVIDENCE_ID, []), 'APPEARANCE IS NOT VERIFICATION');
+  assert.equal(getInvestigationClueLesson('quote_alyssa_only_tried', []), 'TRYING IS EXPOSURE — NOT TESTING');
+  assert.equal(getInvestigationClueLesson(TUTORIAL_OBJECT_ID, []), null);
+  assert.equal(getInvestigationClueLesson(CRITICAL_BOX_EVIDENCE_ID, [CRITICAL_BOX_EVIDENCE_ID]), null);
 });
 
 test('sealed box remains discoverable as critical physical evidence', () => {

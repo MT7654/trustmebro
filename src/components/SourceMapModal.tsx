@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Network, CheckCircle2, AlertCircle, ArrowDown, Lock, Sparkles, HelpCircle, ShieldAlert, Award, ArrowRight, Zap } from 'lucide-react';
 import { EvidenceQuote, SourcePersonId } from '../types';
@@ -30,7 +30,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
   onOpenEvidenceDrawer
 }) => {
   // Check which accounts player has unlocked:
-  const hasRyanAccount = collectedQuotes.some(q => q.id === 'quote_telegram_anonymous' || q.id === 'quote_ryan_trusted_seller');
+  const hasRyanAccount = collectedQuotes.some(q => q.id === 'item_telegram_chat_log' || q.id === 'quote_telegram_anonymous' || q.id === 'quote_ryan_trusted_seller');
   const hasAlyssaAccount = collectedQuotes.some(q => q.id === 'quote_alyssa_only_tried');
   const hasNoahAccount = collectedQuotes.some(q => q.id === 'quote_noah_relied_ryan');
 
@@ -40,6 +40,13 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
   const [noahSource, setNoahSource] = useState<SourcePersonId | null>(hasEarnedCaseCard ? 'ryan' : null);
 
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    if (hasRyanAccount) setRyanSource('unknown_seller');
+    if (hasAlyssaAccount) setAlyssaSource('ryan');
+    if (hasNoahAccount) setNoahSource('ryan');
+  }, [hasAlyssaAccount, hasNoahAccount, hasRyanAccount, isOpen]);
 
   if (!isOpen) return null;
 
@@ -201,7 +208,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
           )}
 
           {/* Signature Award Banner on Unlock */}
-          {(isAllCorrect || hasEarnedCaseCard) && (
+          {hasEarnedCaseCard && (
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -238,8 +245,40 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
             </motion.div>
           )}
 
-          {/* Interactive Workbench: 3 Dependency Questions */}
-          <div className="space-y-4">
+          {!hasEarnedCaseCard && (
+            <div className="p-5 bg-gradient-to-r from-cyan-950/70 via-slate-950 to-amber-950/70 border-2 border-cyan-400/60 rounded-2xl space-y-4">
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="rounded-xl bg-slate-950/80 p-3 border border-purple-400/30">
+                  <div className="font-heading font-black text-purple-300 text-sm">ALYSSA → RYAN</div>
+                  <div className="text-[11px] text-slate-400 mt-1">She tried it because Ryan seemed sure.</div>
+                </div>
+                <div className="rounded-xl bg-slate-950/80 p-3 border border-emerald-400/30">
+                  <div className="font-heading font-black text-emerald-300 text-sm">NOAH → RYAN</div>
+                  <div className="text-[11px] text-slate-400 mt-1">He trusted Ryan, not independent evidence.</div>
+                </div>
+                <div className="rounded-xl bg-slate-950/80 p-3 border border-red-400/30">
+                  <div className="font-heading font-black text-red-300 text-sm">RYAN → UNKNOWN</div>
+                  <div className="text-[11px] text-slate-400 mt-1">The seller supplied reassurance only.</div>
+                </div>
+              </div>
+              <button
+                id="collapse-source-map-btn"
+                disabled={!isAllCorrect}
+                onClick={() => {
+                  if (!isAllCorrect) return;
+                  sound.playContradictionSuccess();
+                  onAwardCaseCard();
+                  setFeedback({ text: '★ ONE ORIGIN, THREE VOICES. Confidence changed hands; evidence never did.', isError: false });
+                }}
+                className="w-full px-5 py-3 bg-cyan-300 hover:bg-cyan-200 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-heading font-black text-sm uppercase tracking-wider rounded-xl border-2 border-white/60 comic-shadow transition-transform hover:scale-[1.01] disabled:hover:scale-100"
+              >
+                Collapse the three assurances into their actual source
+              </button>
+            </div>
+          )}
+
+          {/* Optional manual workbench retained for review, hidden after the decisive clues auto-map it. */}
+          <div className="hidden space-y-4" aria-hidden="true">
             {/* Question 1: RYAN */}
             <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg space-y-3">
               <div className="flex items-center justify-between flex-wrap gap-2">

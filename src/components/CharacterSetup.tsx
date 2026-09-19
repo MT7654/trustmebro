@@ -84,12 +84,12 @@ export const CharacterSetup: React.FC<CharacterSetupProps> = ({
       </header>
 
       {/* Center Setup Box */}
-      <main className="relative z-10 max-w-3xl w-full mx-auto my-auto py-6 sm:py-10">
+      <main className="relative z-10 max-w-5xl w-full mx-auto my-auto py-4 sm:py-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="bg-slate-900/90 border-2 border-slate-700 rounded-xl p-5 sm:p-8 shadow-2xl space-y-8"
+          className="bg-gradient-to-br from-slate-900/88 via-slate-950/92 to-black/95 border border-white/10 rounded-[2rem] p-5 sm:p-7 shadow-[0_30px_100px_rgba(0,0,0,.6)] space-y-6 overflow-hidden"
         >
           {/* Step 1: Avatar Selection */}
           <div className="space-y-4">
@@ -103,28 +103,28 @@ export const CharacterSetup: React.FC<CharacterSetupProps> = ({
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Male Avatar Card */}
               <button
                 type="button"
                 id="avatar-select-male"
                 onClick={() => handleGenderSelect('male')}
-                className={`p-4 rounded-lg border-2 transition-all flex items-center gap-4 cursor-pointer text-left ${
+                className={`relative min-h-56 p-4 rounded-2xl border-2 transition-all flex items-end gap-3 cursor-pointer text-left overflow-hidden ${
                   gender === 'male'
                     ? 'bg-rose-950/60 border-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.25)] ring-1 ring-rose-400'
                     : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 opacity-70 hover:opacity-100'
                 }`}
               >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-slate-900 border border-slate-700 overflow-hidden shrink-0 flex items-center justify-center p-1">
+                <div className="absolute inset-y-0 left-0 w-[48%] flex items-end justify-center bg-gradient-to-t from-rose-950/70 to-transparent">
                   <CharacterIllustration
                     characterId="player"
                     playerGender="male"
                     expression="neutral"
-                    size="sm"
-                    className="w-14 h-14 sm:w-16 sm:h-16"
+                    size="lg"
+                    className="w-full h-full"
                   />
                 </div>
-                <div className="flex-1">
+                <div className="relative z-10 ml-[44%] flex-1 rounded-xl bg-slate-950/72 p-3 backdrop-blur-sm">
                   <div className="flex items-center justify-between">
                     <span className="font-heading font-black text-sm uppercase text-rose-300">
                       Avatar A (Male)
@@ -136,7 +136,7 @@ export const CharacterSetup: React.FC<CharacterSetupProps> = ({
                     )}
                   </div>
                   <p className="text-xs text-slate-400 font-body mt-1 leading-relaxed">
-                    Wireframe spectacles, ash quiff, crimson bomber. Default name: <strong className="text-slate-200">Sam</strong>
+                    Alert, analytical, and steady under pressure. Default name: <strong className="text-slate-200">Sam</strong>
                   </p>
                 </div>
               </button>
@@ -146,22 +146,22 @@ export const CharacterSetup: React.FC<CharacterSetupProps> = ({
                 type="button"
                 id="avatar-select-female"
                 onClick={() => handleGenderSelect('female')}
-                className={`p-4 rounded-lg border-2 transition-all flex items-center gap-4 cursor-pointer text-left ${
+                className={`relative min-h-56 p-4 rounded-2xl border-2 transition-all flex items-end gap-3 cursor-pointer text-left overflow-hidden ${
                   gender === 'female'
                     ? 'bg-purple-950/60 border-purple-400 shadow-[0_0_15px_rgba(192,132,252,0.25)] ring-1 ring-purple-400'
                     : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 opacity-70 hover:opacity-100'
                 }`}
               >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-slate-900 border border-slate-700 overflow-hidden shrink-0 flex items-center justify-center p-1">
+                <div className="absolute inset-y-0 left-0 w-[48%] flex items-end justify-center bg-gradient-to-t from-purple-950/70 to-transparent">
                   <CharacterIllustration
                     characterId="player"
                     playerGender="female"
                     expression="neutral"
-                    size="sm"
-                    className="w-14 h-14 sm:w-16 sm:h-16"
+                    size="lg"
+                    className="w-full h-full"
                   />
                 </div>
-                <div className="flex-1">
+                <div className="relative z-10 ml-[44%] flex-1 rounded-xl bg-slate-950/72 p-3 backdrop-blur-sm">
                   <div className="flex items-center justify-between">
                     <span className="font-heading font-black text-sm uppercase text-purple-300">
                       Avatar B (Female)
@@ -173,7 +173,7 @@ export const CharacterSetup: React.FC<CharacterSetupProps> = ({
                     )}
                   </div>
                   <p className="text-xs text-slate-400 font-body mt-1 leading-relaxed">
-                    Chic topknot & copper balayage, silver hoop earrings, plum jacket. Default name: <strong className="text-slate-200">Alexis</strong>
+                    Composed, perceptive, and direct when a claim does not add up. Default name: <strong className="text-slate-200">Alexis</strong>
                   </p>
                 </div>
               </button>
@@ -181,7 +181,7 @@ export const CharacterSetup: React.FC<CharacterSetupProps> = ({
           </div>
 
           {/* Step 2: Custom Player Name */}
-          <div className="space-y-4 pt-4 border-t border-slate-800">
+          <div className="space-y-3 pt-3 border-t border-slate-800">
             <div className="flex items-center justify-between">
               <label htmlFor="player-name-input" className="font-heading text-sm sm:text-base font-black uppercase tracking-wider text-amber-400 flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-amber-400 text-black text-xs flex items-center justify-center font-bold">2</span>
@@ -241,7 +241,7 @@ export const CharacterSetup: React.FC<CharacterSetupProps> = ({
           </div>
 
           {/* Privacy and Storage Assurance Notice */}
-          <div className="flex items-start gap-2.5 p-3.5 bg-slate-950 border border-slate-800 rounded-lg text-slate-400 text-xs font-body">
+          <div className="flex items-start gap-2.5 px-3.5 py-2.5 bg-slate-950/55 border border-slate-800 rounded-lg text-slate-400 text-xs font-body">
             <Lock className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
             <p className="leading-relaxed">
               <strong className="text-slate-200">Playthrough Privacy:</strong> Your selected name and avatar are held strictly in temporary session memory for this run. No personal data is stored, transmitted, or analysed.

@@ -40,81 +40,55 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({
   const scenes: IntroScene[] = [
     {
       id: 'scene_1_gathering',
-      tag: 'SCENE 1 // CASUAL REUNION',
+      tag: 'SCENE 1 // THE GATHERING',
       title: "Saturday Night at Ryan's Flat",
       settingSubtitle: "Living Room • Toa Payoh, Singapore • 21:45 SGT",
       speakerId: 'alyssa',
       speakerName: 'Alyssa',
       speakerRole: 'Close Friend since Secondary School',
       expression: 'smiling',
-      dialogue: `“Ah, finally the weekend! That poly project deadline was draining my soul. Thanks for having us over, Ryan.”`,
-      contextNote: 'The aircon is humming quietly. Pokka green tea cans and potato chip bowls sit on the coffee table.',
-      roomMood: 'Relaxed, friendly weekend hangout among long-time friends.'
-    },
-    {
-      id: 'scene_2_banter',
-      tag: 'SCENE 2 // OLD HABITS',
-      title: 'Comfortable Banter',
-      settingSubtitle: "Living Room • Mario Kart paused on the television",
-      speakerId: 'noah',
-      speakerName: 'Noah',
-      speakerRole: 'Track Athlete & Friend',
-      expression: 'neutral',
-      dialogue: `“Tell me about it. Coach had us running twelve 400-meter intervals this morning. ${playerName} almost beat my Mario Kart record earlier though!”`,
-      contextNote: 'Everyone has known one another for years. No one feels on guard.',
-      roomMood: 'Familiar and trusting.'
+      dialogue: `“Finally, the weekend. Sit, ${playerName}—food's on the table and the game is paused.”`,
+      contextNote: 'You take the open seat opposite Ryan. Everyone here has known one another for years; nobody feels on guard.',
+      roomMood: 'Warm, familiar, and unguarded.'
     },
     {
       id: 'scene_3_unveiling',
-      tag: 'SCENE 3 // THE UNVEILING',
+      tag: 'SCENE 2 // THE DEVICE',
       title: 'A Device on the Table',
       settingSubtitle: "Living Room • Low coffee table",
       speakerId: 'ryan',
       speakerName: 'Ryan',
       speakerRole: 'The Host',
       expression: 'smiling',
-      dialogue: `“That’s why I called the crew over tonight. Good food, cold drinks, and something special to unwind.”`,
-      contextNote: 'Ryan reaches into his sling bag, pulling out a sleek pastel peach vape pod cartridge.',
-      roomMood: 'Casual curiosity as the device is placed between the drink cans.'
+      dialogue: `“Good food, cold drinks... and something special to unwind.”`,
+      contextNote: 'Ryan takes a pastel vape package from his bag and sets it beside the drinks. The ordinary-looking box draws everyone closer.',
+      roomMood: 'Casual curiosity shifts the room toward the coffee table.'
     },
     {
       id: 'scene_4_the_assurance',
-      tag: 'SCENE 4 // THE ASSURANCE',
+      tag: 'SCENE 3 // THE ASSURANCES',
       title: '“Trust Me, Bro”',
       settingSubtitle: "Living Room • Ryan holding the pod forward",
       speakerId: 'ryan',
       speakerName: 'Ryan',
       speakerRole: 'Holding the Vape',
       expression: 'smiling',
-      dialogue: `“Normal only. Not Kpod. Noah backed it, Alyssa is chill, and my seller is verified. That's three separate confirmations. Trust me, bro.”`,
-      contextNote: 'Ryan presents his confidence with total ease and genuine warmth.',
-      roomMood: 'Confidence established without question.'
-    },
-    {
-      id: 'scene_5_echoes',
-      tag: 'SCENE 5 // THE CONSENSUS FORMS',
-      title: 'The Reassurances Echo',
-      settingSubtitle: "Living Room • Alyssa and Noah nod along",
-      speakerId: 'alyssa',
-      speakerName: 'Alyssa',
-      speakerRole: 'Witness',
-      expression: 'neutral',
-      dialogue: `“Yeah, I took two hits 10 minutes ago, tastes just like sweet peach iced tea, see? Totally chill.”`,
-      contextNote: `Noah chips in: "Alyssa checked what was inside, and Ryan knows the seller. It's fine, ${playerName}."`,
-      roomMood: 'Three confident voices forming an apparent consensus.'
+      dialogue: `“Normal only. Alyssa tried it, Noah backed me, and my seller says it's clean. Three confirmations. Trust me, bro.”`,
+      contextNote: `Alyssa says she felt fine right away. Noah nods because Ryan seems sure. Three voices sound independent—but may not be.`,
+      roomMood: 'Borrowed confidence begins to feel like consensus.'
     },
     {
       id: 'scene_6_your_turn',
-      tag: 'SCENE 6 // THE SPOTLIGHT',
+      tag: 'SCENE 4 // YOUR DECISION',
       title: 'All Eyes Turn to You',
       settingSubtitle: `Living Room • Ryan offers the pod to ${playerName}`,
       speakerId: 'ryan',
       speakerName: 'Ryan',
       speakerRole: 'Offering the Pod',
       expression: 'smiling',
-      dialogue: `“Eh ${playerName}, what are you waiting for? Take a hit la. We all vouch for it!”`,
-      contextNote: 'All three friends look at you expectantly. The assurance sounds solid—but where did it actually originate?',
-      roomMood: 'The moment of decision.'
+      dialogue: `“Your turn, ${playerName}. We all vouch for it.”`,
+      contextNote: 'The device remains in Ryan’s hand. You do not need to know what is inside to pause: first find out whether anyone actually verified it.',
+      roomMood: 'Friendly pressure, focused directly on you.'
     }
   ];
 
