@@ -47,15 +47,15 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/90 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-3 bg-slate-950/90 backdrop-blur-md overflow-hidden">
       <motion.div
         initial={{ scale: 0.88, opacity: 0, y: 30 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="w-full max-w-5xl min-h-[600px] bg-slate-900 border-2 border-yellow-400 text-slate-100 comic-shadow-lg rounded-[1.5rem] overflow-hidden flex flex-col relative shadow-2xl"
+        className="w-full max-w-5xl h-[min(650px,calc(100dvh-1rem))] max-h-[calc(100dvh-1rem)] min-h-0 bg-slate-900 border-2 border-yellow-400 text-slate-100 comic-shadow-lg rounded-[1.5rem] overflow-hidden flex flex-col relative shadow-2xl"
       >
         {/* Flashy Header */}
-        <div className="bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 px-4 py-3 border-b-2 border-black flex items-center justify-between">
+        <div className="shrink-0 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 px-4 py-2.5 border-b-2 border-black flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Flame className="w-5 h-5 text-red-600 fill-red-600 animate-bounce" />
             <span className="font-heading font-black text-sm sm:text-base uppercase tracking-wider">
@@ -68,7 +68,7 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
         </div>
 
         {/* Wording Correction Banner with Dynamic Text Replacement Animation */}
-        <div className="p-4 sm:p-6 bg-slate-950/90 border-b border-slate-800 text-center space-y-3">
+        <div className="shrink-0 p-3 sm:p-4 bg-slate-950/90 border-b border-slate-800 text-center space-y-2">
           <span className="text-[10px] font-display uppercase tracking-widest text-amber-400 block">
             LIVE PREMISE REVISION
           </span>
@@ -120,14 +120,14 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
         </div>
 
         {/* Character Dialogue Sequence (Visual Novel Cut-Scene) */}
-        <div className="p-4 sm:p-6 space-y-4 flex-1 flex flex-col justify-between">
+        <div className="p-3 sm:p-4 gap-3 flex-1 min-h-0 flex flex-col justify-between">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStepIndex}
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
-              className="flex items-center gap-5 sm:gap-8 bg-gradient-to-r from-slate-950 via-slate-950/80 to-amber-950/20 rounded-2xl p-4 sm:p-7 min-h-[210px] overflow-hidden"
+              className="flex flex-1 min-h-0 items-center gap-4 sm:gap-6 bg-gradient-to-r from-slate-950 via-slate-950/80 to-amber-950/20 rounded-2xl p-3 sm:p-5 overflow-y-auto overflow-x-hidden"
             >
               <div className="shrink-0">
                 <CharacterIllustration 
@@ -135,7 +135,7 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
                   playerGender={playerProfile.gender}
                   expression={currentDialogue.expression} 
                   size="lg"
-                  className="w-32 h-44 sm:w-44 sm:h-52 -mb-8"
+                  className="w-28 h-36 sm:w-36 sm:h-44 -mb-5"
                 />
               </div>
 
@@ -158,7 +158,7 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
           </AnimatePresence>
 
           {/* Progression Actions */}
-          <div className="flex items-center justify-between pt-2">
+          <div className="shrink-0 flex items-center justify-between pt-1">
             <span className="text-xs font-display text-slate-400 flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>Evidence Gate Verified</span>
