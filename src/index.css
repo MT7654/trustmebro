@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-heading {
+    font-family: 'Syne', sans-serif;
+  }
+  .font-display {
+    font-family: 'Chakra Petch', monospace;
+  }
+  .font-body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .comic-shadow {
+    box-shadow: 4px 4px 0px 0px #000000;
+  }
+  .comic-shadow-lg {
+    box-shadow: 7px 7px 0px 0px #000000;
+  }
+  .comic-shadow-red {
+    box-shadow: 5px 5px 0px 0px #ef4444;
+  }
+  .comic-shadow-yellow {
+    box-shadow: 5px 5px 0px 0px #eab308;
+  }
+
+  .clip-diagonal {
+    clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+  }
+  .clip-badge {
+    clip-path: polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%);
+  }
+
+  .dot-pattern {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px);
+    background-size: 16px 16px;
+  }
+
+  .manga-lines {
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(239, 68, 68, 0.08),
+      rgba(239, 68, 68, 0.08) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+  }
+
+  @keyframes screenShake {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    20% { transform: translate(-6px, 4px) rotate(-1deg); }
+    40% { transform: translate(6px, -4px) rotate(1deg); }
+    60% { transform: translate(-4px, -2px) rotate(0deg); }
+    80% { transform: translate(4px, 2px) rotate(1deg); }
+  }
+
+  .animate-shake {
+    animation: screenShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  }
+}

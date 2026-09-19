@@ -1,0 +1,6 @@
+{
+  "name": "TRUST ME BRO: A Social Investigation",
+  "description": "Three friends. One assurance. Where did it actually come from? A psychological social investigation game exploring circular trust and unverified peer assurance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
