@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Volume1, Volume2, X } from 'lucide-react';
 import { TutorialStep } from '../../types';
 import { sound } from '../../utils/sound';
 import { GuidedSpotlight } from '../tutorial/GuidedSpotlight';
+import { TutorialSkipConfirm } from '../tutorial/TutorialSkipConfirm';
 
 interface SpeakerTutorialModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
   const [viewIndex, setViewIndex] = useState(0);
   const [volumeFound, setVolumeFound] = useState(false);
   const [volumeDown, setVolumeDown] = useState(false);
+  const [isSkipConfirmOpen, setIsSkipConfirmOpen] = useState(false);
   const dragStart = useRef<number | null>(null);
 
   const rotate = (direction: number) => {
@@ -41,6 +43,7 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
   useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
+      if (document.querySelector('[data-tutorial-skip-confirm]')) return;
       if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') rotate(-1);
       if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') rotate(1);
       if (event.key === 'Escape') onClose();
@@ -75,7 +78,7 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
             <p className="text-[10px] font-display font-bold uppercase tracking-[.28em] text-cyan-300">Practice object · nothing recorded</p>
             <h2 id="speaker-tutorial-title" className="font-heading text-xl font-black text-white sm:text-2xl">Turn down the music</h2>
           </div>
-          <button onClick={() => { if (window.confirm('Skip this practice tutorial and enter the investigation?')) (onSkip || onClose)(); }} aria-label="Skip tutorial" className="flex items-center gap-2 rounded-full border border-white/15 px-3 py-2 text-xs font-bold uppercase text-slate-300 hover:bg-white/10 hover:text-white">Skip tutorial <X className="h-4 w-4" /></button>
+          <button onClick={() => setIsSkipConfirmOpen(true)} aria-label="Skip tutorial" className="flex items-center gap-2 rounded-full border border-white/15 px-3 py-2 text-xs font-bold uppercase text-slate-300 hover:bg-white/10 hover:text-white">Skip tutorial <X className="h-4 w-4" /></button>
         </div>
 
         <div className="grid gap-0 sm:grid-cols-[1.35fr_.65fr]">
@@ -143,6 +146,7 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
       {tutorialStep==='investigation_rotate_speaker'&&<GuidedSpotlight target="speaker-rotate-area" step={2} total={4} title="Rotate the speaker" instruction="Drag or swipe the object, use the arrow controls, or press A/D until you can see its rear controls." onSkip={()=>onSkip?.()} isReducedMotion={isReducedMotion}/>}
       {tutorialStep==='investigation_find_volume'&&<GuidedSpotlight target="speaker-volume-control" step={3} total={4} title="Inspect the volume control" instruction="Select the control you found on the back of the speaker." onSkip={()=>onSkip?.()} isReducedMotion={isReducedMotion}/>}
       {tutorialStep==='investigation_lower_volume'&&<GuidedSpotlight target="speaker-lower-volume" step={4} total={4} title="Turn the music down" instruction="Use the highlighted action so everyone in the room can hear one another." onSkip={()=>onSkip?.()} isReducedMotion={isReducedMotion}/>}
+      <TutorialSkipConfirm isOpen={isSkipConfirmOpen} destination="investigation" onCancel={()=>setIsSkipConfirmOpen(false)} onConfirm={()=>{setIsSkipConfirmOpen(false);(onSkip || onClose)();}} isReducedMotion={isReducedMotion}/>
     </div>
   );
 };

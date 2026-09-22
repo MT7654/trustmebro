@@ -112,3 +112,19 @@ test('recording a quote does not preselect evidence for presentation',()=>{
   assert.match(app,/if \(claimId !== activeClaimId\)[\s\S]{0,180}setSelectedQuoteId\(null\)/);
   assert.match(app,/setIsEvidenceDrawerOpen\(false\);\s*setSelectedQuoteId\(null\)/);
 });
+
+test('tutorial skips use the shared in-game confirmation instead of browser dialogs',()=>{
+  const spotlight=readFileSync(join(process.cwd(),'src/components/tutorial/GuidedSpotlight.tsx'),'utf8');
+  const speaker=readFileSync(join(process.cwd(),'src/components/inspection/SpeakerTutorialModal.tsx'),'utf8');
+  const crossExam=readFileSync(join(process.cwd(),'src/components/CrossExamPractice.tsx'),'utf8');
+  const confirmation=readFileSync(join(process.cwd(),'src/components/tutorial/TutorialSkipConfirm.tsx'),'utf8');
+  for(const source of [spotlight,speaker,crossExam]){
+    assert.doesNotMatch(source,/window\.(?:confirm|alert)\s*\(/);
+    assert.match(source,/TutorialSkipConfirm/);
+  }
+  assert.match(confirmation,/role="dialog"/);
+  assert.match(confirmation,/aria-modal="true"/);
+  assert.match(confirmation,/Continue tutorial/);
+  assert.match(confirmation,/data-tutorial-skip-confirm/);
+  assert.match(confirmation,/event\.key === 'Escape'/);
+});

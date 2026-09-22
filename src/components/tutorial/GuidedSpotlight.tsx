@@ -1,10 +1,12 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SkipForward } from 'lucide-react';
+import { TutorialSkipConfirm } from './TutorialSkipConfirm';
 
 interface Props {
   target:string; title:string; instruction:string; step:number; total:number;
   onSkip:()=>void; isReducedMotion?:boolean; scopeSelector?:string;
+  skipDestination?:'investigation'|'cross-examination';
 }
 interface Box { top:number; left:number; width:number; height:number; }
 interface Point { top:number; left:number; }
@@ -13,10 +15,11 @@ const CARD_WIDTH=360;
 const CARD_HEIGHT=150;
 const GAP=14;
 
-export const GuidedSpotlight:React.FC<Props> = ({target,title,instruction,step,total,onSkip,isReducedMotion=false,scopeSelector}) => {
+export const GuidedSpotlight:React.FC<Props> = ({target,title,instruction,step,total,onSkip,isReducedMotion=false,scopeSelector,skipDestination='investigation'}) => {
   const [box,setBox]=useState<Box|null>(null);
   const [card,setCard]=useState<Point>({top:80,left:12});
   const [attempts,setAttempts]=useState(0);
+  const [isSkipConfirmOpen,setIsSkipConfirmOpen]=useState(false);
 
   const locate=()=>{
     const scope=(scopeSelector ? document.querySelector(scopeSelector) : document) || document;
@@ -60,7 +63,8 @@ export const GuidedSpotlight:React.FC<Props> = ({target,title,instruction,step,t
   if(typeof document==='undefined')return null;
   return createPortal(<div className="pointer-events-none fixed inset-0 z-[90]" aria-live="polite" aria-label={`Guided practice step ${step} of ${total}: ${title}`}>
     {box?<><div className="pointer-events-auto fixed bg-slate-950/80" style={{left:0,top:0,width:'100%',height:box.top}}/><div className="pointer-events-auto fixed bg-slate-950/80" style={{left:0,top:box.top,width:box.left,height:box.height}}/><div className="pointer-events-auto fixed bg-slate-950/80" style={{left:box.left+box.width,top:box.top,right:0,height:box.height}}/><div className="pointer-events-auto fixed bg-slate-950/80" style={{left:0,top:box.top+box.height,width:'100%',bottom:0}}/><div className={`pointer-events-none fixed rounded-xl border-2 border-cyan-300 ring-4 ring-cyan-300/25 ${isReducedMotion?'':'animate-pulse'}`} style={box}/></>:<div className="pointer-events-auto fixed inset-0 bg-slate-950/80"/>}
-    <button onClick={()=>{if(window.confirm('Skip the guided tutorial? You can replay it from Guided Help.'))onSkip();}} className="pointer-events-auto fixed right-4 top-4 z-20 flex items-center gap-2 rounded-full border border-white/25 bg-slate-950 px-4 py-2 text-xs font-bold uppercase focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"><SkipForward className="h-4 w-4"/>Skip tutorial</button>
+    <button onClick={()=>setIsSkipConfirmOpen(true)} className="pointer-events-auto fixed right-4 top-4 z-20 flex items-center gap-2 rounded-full border border-white/25 bg-slate-950 px-4 py-2 text-xs font-bold uppercase focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"><SkipForward className="h-4 w-4"/>Skip tutorial</button>
     <div className="pointer-events-auto fixed z-20 w-[min(360px,calc(100vw-24px))] rounded-2xl border border-cyan-300/60 bg-slate-900 p-4 shadow-2xl" style={card}><p className="text-[10px] font-display font-black uppercase tracking-[.2em] text-cyan-300">Guided practice · {step}/{total}</p><h3 className="mt-1 font-heading text-lg font-black">{title}</h3><p className="mt-2 text-sm leading-relaxed text-slate-200">{box?instruction:'Preparing the next control…'}</p>{!box&&attempts>3&&<button onClick={locate} className="mt-3 rounded-lg border border-cyan-300 px-3 py-2 text-xs font-bold uppercase text-cyan-200">Retry step</button>}</div>
+    <TutorialSkipConfirm isOpen={isSkipConfirmOpen} destination={skipDestination} onCancel={()=>setIsSkipConfirmOpen(false)} onConfirm={()=>{setIsSkipConfirmOpen(false);onSkip();}} isReducedMotion={isReducedMotion}/>
   </div>,document.body);
 };

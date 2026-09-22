@@ -3108,6 +3108,93 @@ This issue requires browser verification before it is considered complete:
 
 ---
 
+## Issue Set 18 — Replace browser-native tutorial skip confirmations
+
+### Owner observation
+
+Selecting **Skip Tutorial** currently opens a browser-owned confirmation box labelled `localhost:3000 says`. This breaks the visual continuity of the game and makes the action feel like a browser warning rather than part of the guided experience.
+
+### Diagnosis
+
+This is intentional behaviour in the current implementation, not a Chrome or localhost fault:
+
+- `GuidedSpotlight.tsx` calls `window.confirm(...)` before invoking its `onSkip` callback.
+- `SpeakerTutorialModal.tsx` separately calls `window.confirm(...)` from its own skip button.
+- The courtroom practice header also exposes a skip button, but that path invokes `onSkip` immediately without the same confirmation.
+
+As a result, tutorial skipping is implemented through multiple paths with inconsistent behaviour. Native browser confirmations also cannot be styled, use generic **OK / Cancel** labels, block the browser UI, and do not match the game's presentation or interaction language.
+
+### Planned interaction
+
+Replace every native tutorial-skip confirmation with one reusable in-game confirmation dialog.
+
+1. The first press of **Skip Tutorial** opens a themed game dialog; it must not skip immediately.
+2. The dialog explains that the guided practice can be replayed later from **Guided Help**.
+3. The safe/default action is **Continue Tutorial**.
+4. The deliberate exit action uses destination-aware language:
+   - **Skip to Investigation** during investigation practice;
+   - **Skip to Cross-Examination** during courtroom practice.
+5. Confirming performs the existing skip transition exactly once and does not alter case evidence, gate progress, attempts, or other game state.
+6. Cancelling returns the player to the same tutorial step and restores focus to the original skip button.
+
+### Implementation structure
+
+- Introduce a shared controlled component such as `TutorialSkipConfirm` rather than placing separate confirmation logic inside each tutorial.
+- Give the tutorial owner a single `isSkipConfirmOpen` state and route all skip entry points through it, including:
+  - the top-right guided spotlight skip button;
+  - the portable-speaker practice modal;
+  - the courtroom practice header and spotlight.
+- Remove both uses of `window.confirm()` and prevent new native `confirm()` or `alert()` calls from being used for this flow.
+- Keep the existing final skip callbacks and tutorial-state transitions as the single source of truth.
+- Prevent clicks from passing through the confirmation overlay to the highlighted tutorial target.
+- Ensure nested tutorial surfaces cannot fire `onSkip` twice.
+
+### Accessibility and presentation
+
+- Use `role="dialog"`, `aria-modal="true"`, an accessible title, and descriptive text.
+- Move initial focus to **Continue Tutorial**, trap focus inside the dialog, support `Escape` to cancel, and restore focus when dismissed.
+- Position the dialog above the tutorial spotlight and dimmer without clipping at compact browser heights.
+- Respect reduced-motion preferences for its entrance and exit.
+- Keep the dialog visually consistent with the existing dark case-file UI, cyan guided-practice accent, and yellow action hierarchy.
+
+### Verification plan
+
+#### Behaviour checks
+
+- First skip click opens the in-game dialog and does not call `onSkip`.
+- **Continue Tutorial**, outside dismissal if enabled, and `Escape` leave the tutorial at the same step.
+- The explicit skip action calls `onSkip` once and reaches the correct investigation or courtroom destination.
+- Guided Help can replay the skipped tutorial.
+- No tutorial skip route opens a browser-owned popup.
+
+#### Browser checks
+
+Check both investigation and courtroom tutorial flows at representative laptop viewports, including approximately `1280x600` and `1366x650`, at 100% and 125% browser zoom. Verify:
+
+- the confirmation remains fully visible and above the spotlight;
+- neither action is clipped;
+- keyboard Tab, Shift+Tab, Enter, and Escape behave correctly;
+- underlying highlighted controls cannot be activated while the dialog is open;
+- confirming and cancelling preserve the correct tutorial and game state.
+
+#### Automated regression coverage
+
+- Add a source-level guard that tutorial components do not use `window.confirm` or `window.alert`.
+- Add interaction coverage for open, cancel, confirm, focus restoration, and exactly-once skip handling.
+- Cover both destination-specific variants and all visible skip entry points.
+
+### Status
+
+Implemented and browser-verified on 22 September 2026.
+
+- Replaced native browser confirmations with the shared `TutorialSkipConfirm` game dialog.
+- Connected investigation spotlight, speaker practice, courtroom header, and courtroom spotlight skip routes.
+- Added destination-specific actions, keyboard focus containment, Escape cancellation, focus restoration, and click-through protection.
+- Added regression coverage preventing tutorial components from returning to `window.confirm()` or `window.alert()`.
+- Verified the investigation flow in-browser: open, Escape/cancel, focus restoration, and confirmed skip all behave correctly.
+
+---
+
 ## Future issue intake template
 
 ### Issue Set NN — Title
