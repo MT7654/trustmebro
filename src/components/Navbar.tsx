@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Network, HelpCircle, ArrowLeft, Home, Eye, EyeOff } from 'lucide-react';
+import { Volume2, VolumeX, Network, HelpCircle, Home, Eye, EyeOff, Music2, Expand, Minimize } from 'lucide-react';
 import { sound } from '../utils/sound';
 
 interface NavbarProps {
@@ -8,11 +8,15 @@ interface NavbarProps {
   onReturnToTitle?: () => void;
   isMuted: boolean;
   onToggleMute: () => void;
+  isMusicEnabled: boolean;
+  onToggleMusic: () => void;
   isReducedMotion?: boolean;
   onToggleReducedMotion?: () => void;
   discoveredCluesCount: number;
   totalClues: number;
   canObject: boolean;
+  isFullscreen?: boolean;
+  onToggleFullscreen?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -21,11 +25,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   onReturnToTitle,
   isMuted,
   onToggleMute,
+  isMusicEnabled,
+  onToggleMusic,
   isReducedMotion = false,
   onToggleReducedMotion,
   discoveredCluesCount,
   totalClues,
-  canObject
+  canObject,
+  isFullscreen=false,
+  onToggleFullscreen
 }) => {
   return (
     <header className="sticky top-0 z-30 bg-slate-950/95 border-b border-slate-800 select-none text-white backdrop-blur-md">
@@ -89,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <Network className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Source Map</span>
+            <span className="hidden sm:inline">Case Progress</span>
             <span className="bg-slate-950 text-amber-300 px-1.5 py-0.2 rounded text-[10px] font-mono">
               {discoveredCluesCount}/{totalClues}
             </span>
@@ -115,6 +123,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
 
           {/* Sound Mute Toggle */}
+          {onToggleFullscreen&&<button onClick={onToggleFullscreen} title={isFullscreen?'Exit full screen':'Enter full screen'} className="hidden h-8 w-8 items-center justify-center rounded border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 sm:flex">{isFullscreen?<Minimize className="h-4 w-4"/>:<Expand className="h-4 w-4"/>}</button>}
+
+          {/* Sound Mute Toggle */}
+          <button id="nav-music-toggle-btn" onClick={onToggleMusic} title={isMusicEnabled?'Turn music off':'Turn music on'} aria-pressed={isMusicEnabled} className={`w-8 h-8 rounded flex items-center justify-center border transition-colors ${isMusicEnabled?'bg-cyan-950 text-cyan-300 border-cyan-700':'bg-slate-900 text-slate-500 border-slate-800'}`}>
+            <Music2 className="w-4 h-4" />
+          </button>
+
+          {/* Sound effects toggle */}
           <button
             id="nav-sound-toggle-btn"
             onClick={onToggleMute}
@@ -131,11 +147,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               sound.playClick();
               onOpenHelp();
             }}
-            title="How to Play & Case Briefing"
+            title="Guided Help"
             className="px-2.5 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 border border-slate-800 transition-colors cursor-pointer text-xs font-display font-bold uppercase"
           >
             <HelpCircle className="w-4 h-4 text-amber-400" />
-            <span className="hidden md:inline">How to Play</span>
+            <span className="hidden md:inline">Guided Help</span>
           </button>
         </div>
       </div>

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+:root {
+  --gold-readable: #d6a928;
+  --gold-readable-strong: #e3b934;
+  --gold-focus: #f59e0b;
+}
+
 @layer utilities {
   .font-heading {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -57,11 +63,45 @@
   .animate-shake {
     animation: screenShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
   }
+
+  .text-readable-gold {
+    color: var(--gold-readable-strong);
+  }
 }
 
 :focus-visible {
-  outline: 3px solid #facc15;
+  outline: 3px solid var(--gold-focus);
   outline-offset: 3px;
+}
+
+/* Pale yellow display text blooms against the navy surfaces. Keep bright yellow
+   for action fills, while text uses a deeper, more legible gold. */
+.text-yellow-300,
+.text-amber-200,
+.text-amber-300 {
+  color: var(--gold-readable-strong) !important;
+}
+
+@media (min-width: 900px) and (max-height: 780px) {
+  header.sticky > div:first-child { display: none; }
+  header.sticky > div:nth-child(2) { padding-top: .35rem; padding-bottom: .35rem; }
+  main { padding-top: .35rem !important; padding-bottom: .35rem !important; }
+  .font-body { line-height: 1.35; }
+  .evidence-header { padding-top: .55rem !important; padding-bottom: .55rem !important; }
+  .evidence-target { padding-top: .5rem !important; padding-bottom: .5rem !important; }
+  .evidence-card { min-height: 150px !important; padding: .75rem !important; }
+  .courtroom-stage-grid { grid-template-rows: clamp(210px, 33dvh, 250px) minmax(0, 1fr) !important; }
+  .courtroom-character-art { height: clamp(9.5rem, 24dvh, 12rem) !important; width: clamp(7rem, 12dvh, 9rem) !important; }
+  .courtroom-character-stage { gap: clamp(2.5rem, 7vw, 7rem) !important; padding-bottom: .75rem !important; }
+  .courtroom-scene-status { padding-top: .25rem !important; padding-bottom: .25rem !important; }
+  .courtroom-table-overlay { height: 1.55rem !important; }
+  .courtroom-dialogue { gap: .35rem !important; }
+  .courtroom-status-rail,
+  .courtroom-claim-rail { padding-top: .25rem !important; padding-bottom: .25rem !important; }
+  .courtroom-narrative-body { padding-top: .5rem !important; padding-bottom: .5rem !important; }
+  .courtroom-command-surface { padding-top: .45rem !important; padding-bottom: .45rem !important; }
+  .courtroom-press-grid button { padding: .4rem !important; }
+  .outcome-scroll-region { padding-top: .75rem !important; padding-bottom: 1.5rem !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Network, CheckCircle2, AlertCircle, ArrowDown, Lock, Sparkles, HelpCircle, ShieldAlert, Award, ArrowRight, Zap } from 'lucide-react';
 import { EvidenceQuote, SourcePersonId } from '../types';
@@ -12,6 +12,7 @@ interface SourceMapModalProps {
   hasEarnedCaseCard: boolean;
   onAwardCaseCard: () => void;
   onOpenEvidenceDrawer: () => void;
+  isSynthesisUnlocked: boolean;
 }
 
 interface NodeInfo {
@@ -27,7 +28,8 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
   collectedQuotes,
   hasEarnedCaseCard,
   onAwardCaseCard,
-  onOpenEvidenceDrawer
+  onOpenEvidenceDrawer,
+  isSynthesisUnlocked
 }) => {
   // Check which accounts player has unlocked:
   const hasRyanAccount = collectedQuotes.some(q => q.id === 'item_telegram_chat_log' || q.id === 'quote_telegram_anonymous' || q.id === 'quote_ryan_trusted_seller');
@@ -40,13 +42,6 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
   const [noahSource, setNoahSource] = useState<SourcePersonId | null>(hasEarnedCaseCard ? 'ryan' : null);
 
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    if (hasRyanAccount) setRyanSource('unknown_seller');
-    if (hasAlyssaAccount) setAlyssaSource('ryan');
-    if (hasNoahAccount) setNoahSource('ryan');
-  }, [hasAlyssaAccount, hasNoahAccount, hasRyanAccount, isOpen]);
 
   if (!isOpen) return null;
 
@@ -129,11 +124,8 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
   const checkCompletion = (r: SourcePersonId | null, a: SourcePersonId | null, n: SourcePersonId | null) => {
     if (r === 'unknown_seller' && a === 'ryan' && n === 'ryan') {
       sound.playContradictionSuccess();
-      if (!hasEarnedCaseCard) {
-        onAwardCaseCard();
-      }
       setFeedback({
-        text: "★ SOURCE MAP COMPLETE! The illusion of 3 independent confirmations collapses into 1 unverified source.",
+        text: "All three links are supported. Collapse the map to create the Source Synthesis card.",
         isError: false
       });
     }
@@ -157,7 +149,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
             </div>
             <div>
               <h2 className="font-heading text-lg sm:text-xl font-black uppercase tracking-wider text-white">
-                THE SOURCE MAP: APPARENT VS. ACTUAL ORIGIN
+                SOURCE SYNTHESIS: APPARENT VS. ACTUAL ORIGIN
               </h2>
               <p className="font-display text-xs text-amber-400 font-bold uppercase tracking-wider">
                 Exposing the Single Unverified Source Behind 3 Confident Friends
@@ -245,20 +237,28 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
             </motion.div>
           )}
 
-          {!hasEarnedCaseCard && (
+          {!hasEarnedCaseCard && !isSynthesisUnlocked && (
+            <div className="rounded-2xl border border-slate-700 bg-slate-950 p-6 text-center">
+              <Lock className="mx-auto mb-3 h-8 w-8 text-slate-500" />
+              <h3 className="font-heading text-xl font-black text-white">Source Synthesis is not ready</h3>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-slate-400">First resolve the appearance, Noah and Alyssa gates with evidence. Successful clarifications—not raw quotes alone—unlock this final reasoning tool.</p>
+            </div>
+          )}
+
+          {!hasEarnedCaseCard && isSynthesisUnlocked && (
             <div className="p-5 bg-gradient-to-r from-cyan-950/70 via-slate-950 to-amber-950/70 border-2 border-cyan-400/60 rounded-2xl space-y-4">
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="rounded-xl bg-slate-950/80 p-3 border border-purple-400/30">
-                  <div className="font-heading font-black text-purple-300 text-sm">ALYSSA → RYAN</div>
-                  <div className="text-[11px] text-slate-400 mt-1">She tried it because Ryan seemed sure.</div>
+                  <div className="font-heading font-black text-purple-300 text-sm">ALYSSA → ?</div>
+                  <div className="text-[11px] text-slate-400 mt-1">Use her clarified account to identify the source.</div>
                 </div>
                 <div className="rounded-xl bg-slate-950/80 p-3 border border-emerald-400/30">
-                  <div className="font-heading font-black text-emerald-300 text-sm">NOAH → RYAN</div>
-                  <div className="text-[11px] text-slate-400 mt-1">He trusted Ryan, not independent evidence.</div>
+                  <div className="font-heading font-black text-emerald-300 text-sm">NOAH → ?</div>
+                  <div className="text-[11px] text-slate-400 mt-1">Use his clarified account to identify the source.</div>
                 </div>
                 <div className="rounded-xl bg-slate-950/80 p-3 border border-red-400/30">
-                  <div className="font-heading font-black text-red-300 text-sm">RYAN → UNKNOWN</div>
-                  <div className="text-[11px] text-slate-400 mt-1">The seller supplied reassurance only.</div>
+                  <div className="font-heading font-black text-red-300 text-sm">RYAN → ?</div>
+                  <div className="text-[11px] text-slate-400 mt-1">Use the seller clarification to identify the origin.</div>
                 </div>
               </div>
               <button
@@ -278,7 +278,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
           )}
 
           {/* Optional manual workbench retained for review, hidden after the decisive clues auto-map it. */}
-          <div className="hidden space-y-4" aria-hidden="true">
+          {!hasEarnedCaseCard && isSynthesisUnlocked && <div className="space-y-4">
             {/* Question 1: RYAN */}
             <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg space-y-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
@@ -419,7 +419,7 @@ export const SourceMapModal: React.FC<SourceMapModalProps> = ({
                 })}
               </div>
             </div>
-          </div>
+          </div>}
 
           {/* Signature 3-to-1 Collapse Diagram */}
           <div className="p-4 sm:p-6 bg-slate-950 border border-slate-800 rounded-lg text-center space-y-4">

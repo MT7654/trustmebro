@@ -52,7 +52,6 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
       quote_ryan_trusted_seller: `Ryan blinks: "What the seller told me is one thing, but look at the physical pod on the table—it looks like any regular vape you buy anywhere!"`,
       item_telegram_chat_log: `Ryan says: "My chat with the seller doesn't change how clean the hardware looks. Look at the box on the table!"`,
       quote_noah_relied_ryan: `Ryan smiles: "Noah's backing is nice, but I'm talking about the hardware in front of us. It looks 100% normal."`,
-      card_one_origin_three_voices: `Ryan scratches his head: "That source map is about who talked to whom, but how does that address whether the physical vape looks legit?"`
     },
     breakthroughDialogue: [
       {
@@ -94,7 +93,6 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
       quote_ryan_trusted_seller: `Noah frowns: "Wait, I wasn't talking about Ryan or his dealer. I was talking about Alyssa taking a puff right in front of us."`,
       item_telegram_chat_log: `Noah blinks: "I don't know who Ryan messages. I just saw Alyssa take a puff."`,
       quote_noah_relied_ryan: `Noah crosses his arms: "Yeah, I trust Ryan. But I brought up Alyssa checking it, not who I trust. That doesn't disprove what I said about her."`,
-      card_one_origin_three_voices: `Noah scratches his head: "That map makes sense for the whole room, but it doesn't address what I said about Alyssa checking it."`
     },
     breakthroughDialogue: [
       {
@@ -135,7 +133,6 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
       item_inspected_box: `Alyssa looks at the box: "I saw the torn packaging, but I assumed Ryan got it verified from his supplier. Does the box prove Ryan didn't check it?"`,
       item_unmarked_foil_pod: `Alyssa looks at the pod: "I saw the unlabelled plastic, but I assumed Ryan checked it. Does the hardware prove what Ryan did?"`,
       quote_noah_relied_ryan: `Alyssa looks puzzled: "Noah trusting Ryan is sweet, but that doesn't tell me whether Ryan actually checked this cartridge."`,
-      card_one_origin_three_voices: `Alyssa murmurs: "The map shows the whole room, but I want to know what Ryan actually inspected himself."`
     },
     breakthroughDialogue: [
       {
@@ -168,8 +165,8 @@ export const INITIAL_PINNED_CLAIMS: PinnedClaim[] = [
     keyWordCorrected: 'ONE CLAIM',
     fullCorrectedText: `Ryan: "ONE CLAIM echoed across three trusting friends."`,
     isCorrected: false,
-    targetQuoteIds: ['card_one_origin_three_voices'],
-    targetQuoteId: 'card_one_origin_three_voices',
+    targetQuoteIds: ['quote_noah_relied_ryan', 'quote_alyssa_only_tried', 'quote_ryan_trusted_seller', 'item_telegram_chat_log'],
+    targetQuoteId: 'quote_noah_relied_ryan',
     description: 'Ryan argues that Noah, Alyssa, and his seller each provided separate proof, equaling three independent verifications of safety.',
     mismatchReplies: {
       item_inspected_box: `Ryan says: "The box being unmarked was already cleared up, but Noah and Alyssa both backed me up. That's still three people!"`,
@@ -222,14 +219,14 @@ export const ALL_DISCOVERABLE_QUOTES: Record<string, EvidenceQuote> = {
     speakerId: 'player',
     speakerName: 'Physical Cartridge Inspection',
     category: 'physical',
-    title: 'Translucent Cartridge Vape',
+    title: 'Unmarked Pod Exterior',
     thumbnailType: 'pod',
-    neutralDescription: 'Translucent plastic cartridge filled with amber e-liquid and unmarked brass contacts. Clean appearance with zero chemical batch etching or concentration disclosure.',
-    quote: '“Translucent plastic vape cartridge filled with amber liquid and standard brass coil contacts. Standard hardware appearance with zero chemical or batch serial markings.”',
+    neutralDescription: 'An unmarked pod exterior with no traceable batch or verification marking. Its appearance cannot establish what it contains.',
+    quote: '“The pod exterior has no traceable batch or verification marking. Hardware appearance cannot establish its contents or safety.”',
     context: 'Physical cartridge pod inspected on the coffee table.',
     contradictsClaimId: 'claim_ryan_appearance',
     tag: 'PHYSICAL EVIDENCE (HARDWARE)',
-    itemDetails: 'Clean consumer appearance that reveals no information about the chemical composition of the e-liquid.'
+    itemDetails: 'The exterior provides no independently verifiable information about the contents.'
   },
   item_telegram_chat_log: {
     id: 'item_telegram_chat_log',
@@ -299,20 +296,6 @@ export const ALL_DISCOVERABLE_QUOTES: Record<string, EvidenceQuote> = {
     context: `Revealed when pressing Ryan on his supplier's true identity and packaging.`,
     contradictsClaimId: '',
     tag: `DEPENDENCY: RYAN → UNKNOWN SELLER`
-  },
-  card_one_origin_three_voices: {
-    id: 'card_one_origin_three_voices',
-    speakerId: 'player',
-    speakerName: 'Source Map',
-    category: 'source_map',
-    title: '“One origin, three voices”',
-    thumbnailType: 'source_map',
-    neutralDescription: 'Completed dependency map proving that Noah and Alyssa relied on Ryan, who relied on the unknown seller. Three apparently separate confirmations collapse into a single unverified source.',
-    quote: 'Unknown seller → Ryan → Alyssa and Noah: Three apparently independent voices collapse back into a single unverified source.',
-    context: 'Completed dependency map proving that all three friends were relying on an anonymous contact.',
-    contradictsClaimId: 'claim_ryan_confirmations',
-    tag: 'CASE CARD (STRUCTURAL MAP)',
-    itemDetails: 'The structural proof that three apparent confirmations are really just one unverified claim echoed around the room.'
   }
 };
 
@@ -499,12 +482,6 @@ export const FINAL_RESPONSE_OPTIONS: FinalResponseOption[] = [
     leadsToTitle: 'Break the Chain'
   },
   {
-    id: 'RIGHT_BUT_ALONE',
-    promptText: 'Make the same argument after personally attacking Ryan.',
-    subtext: 'Accuse Ryan of being reckless and irresponsible for trusting an anonymous dealer.',
-    leadsToTitle: 'Right, but Alone'
-  },
-  {
     id: 'FALSE_CONSENSUS',
     promptText: 'Ask Ryan to check with the same seller again.',
     subtext: 'Seek re-confirmation from the exact unverified source whose credibility is in question.',
@@ -551,31 +528,6 @@ The device goes back into Ryan's bag, unused. Its contents remain unknown. You c
       psychologicalPrinciple: "Dismantling Pluralistic Ignorance & Information Cascades",
       realWorldContext: "Under Singapore law, all vapes are prohibited and unregulated. In black-market supply chains, neither buyers nor street peddlers possess chemical testing capability. What peers call 'clean' is simply unverified assurance.",
       actionableTakeaway: "Separate your friend from the source. By pointing out that three confident voices were actually one unverified stranger, you remove peer pressure without putting your friends on the defensive."
-    }
-  },
-
-  RIGHT_BUT_ALONE: {
-    type: 'RIGHT_BUT_ALONE',
-    title: 'RIGHT, BUT ALONE',
-    subtitle: 'You made the correct argument, but attacked Ryan personally and polarized the room.',
-    badge: 'DEFENSIVE BACKLASH',
-    badgeColor: 'bg-amber-500 text-black',
-    narrativeText: `You expose the unverified chain, then turn it into a personal attack on Ryan.
-
-Ryan stops listening. Noah and Alyssa move to defend their friend instead of examining the evidence. Your logic was sound, but humiliation made the room protect Ryan's dignity rather than reconsider the risk.
-
-The device remains on the table and the contents remain unknown. A safer intervention attacks the missing verification—not the person.`,
-    extendedSourceChain: {
-      seller: 'Unknown Seller (unverified source)',
-      ryan: 'Ryan (Defensively doubling down to save face)',
-      group: 'Noah & Alyssa (Siding with Ryan against your hostility)',
-      player: 'You (Alienated despite accurate logic)',
-      nextFriend: 'Risk Escalated (Group continues vaping out of defiance)'
-    },
-    educationalDebrief: {
-      psychologicalPrinciple: "Psychological Reactance & Ego Threat",
-      realWorldContext: "When people feel morally attacked or belittled in front of peers, their threat response shifts from the physical hazard to their social dignity. Accusations force peers to defend the person rather than evaluate the risk.",
-      actionableTakeaway: "Attack the lack of verification, never the friend. When you attack a friend's character, the group rallies around them to protect their feelings, reinforcing the very behavior you wanted to stop."
     }
   },
 
@@ -632,25 +584,27 @@ You never needed to identify the substance. The accurate message was stronger: n
   THE_NEXT_VOICE: {
     type: 'THE_NEXT_VOICE',
     title: 'THE NEXT VOICE',
-    subtitle: 'You yielded to apparent confidence. Your survival became the next reassurance in the chain.',
+    subtitle: 'You acted against what the evidence told you, then heard your choice become someone else’s reassurance.',
     badge: 'THE UNBROKEN CHAIN',
     badgeColor: 'bg-rose-700 text-white',
-    narrativeText: `You accept the room's confidence and become another voice saying it seemed fine.
+    narrativeText: `You look at the sliced seal, the blank verification fields and the chain you just mapped. The doubt is no longer vague. You understand that nobody in the room can verify what is inside.
 
-Nothing you observe in the moment verifies the contents or future risk. Later, another friend treats your experience as proof for a different unverified device.
+Then you accept it anyway.
 
-The chain grows because “I seemed fine” sounds reassuring. It is not evidence. Refusing an unknown device—and refusing to endorse it for someone else—breaks that chain.`,
+The choice sits badly because it contradicts your own judgment. Later, another friend says, “But you tried one and said it seemed fine.” Your private compromise has become public reassurance.
+
+You correct the record: “I shouldn’t have called it fine. I still don’t know what was inside. Don’t use what happened to me as proof.” The contents remain unknown; the responsibility is to stop passing uncertainty forward.`,
     extendedSourceChain: {
       seller: 'Unknown Seller (unverified source)',
       ryan: 'Ryan (Offered pod based on text message)',
       group: 'Noah & Alyssa (Echoed confidence without checking)',
-      player: 'You (Inhaled because "Alyssa seemed fine")',
-      nextFriend: 'Leo & Chloe (Relied on your survival as proof of safety)'
+      player: 'You (Acted against the evidence, then corrected the record)',
+      nextFriend: 'A later friend hears your repair: experience is not proof'
     },
     educationalDebrief: {
       psychologicalPrinciple: "Social Contagion & The Reassurance Trap",
       realWorldContext: "Surviving an unregulated encounter does not prove safety. But peers routinely interpret 'my friend tried it and was fine' as scientific endorsement, perpetuating the illusion of safety down an endless chain.",
-      actionableTakeaway: "'I was fine' is not verification. When you rely on casual survival as proof of safety, you unwittingly become the next voice endorsing a blind gamble for someone else."
+      actionableTakeaway: "If you have ever called an unknown device 'fine', repair the message directly: you still do not know what was inside, and your experience must not be used as proof."
     }
   }
 };

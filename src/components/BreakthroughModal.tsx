@@ -127,7 +127,7 @@ export const BreakthroughModal: React.FC<BreakthroughModalProps> = ({
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
-              className="flex flex-1 min-h-0 items-center gap-4 sm:gap-6 bg-gradient-to-r from-slate-950 via-slate-950/80 to-amber-950/20 rounded-2xl p-3 sm:p-5 overflow-y-auto overflow-x-hidden"
+              className="flex flex-1 min-h-0 items-center gap-4 sm:gap-6 bg-gradient-to-r from-slate-950 via-slate-950/80 to-amber-950/20 rounded-2xl p-3 sm:p-5 overflow-hidden"
             >
               <div className="shrink-0">
                 <CharacterIllustration 

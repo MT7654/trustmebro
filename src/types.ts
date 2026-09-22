@@ -103,10 +103,26 @@ export interface TestimonyStep {
 
 export type EndingType = 
   | 'BREAK_THE_CHAIN' 
-  | 'RIGHT_BUT_ALONE' 
   | 'FALSE_CONSENSUS' 
   | 'THE_GUESS'
   | 'THE_NEXT_VOICE';
+
+export interface InquiryProgress {
+  phase: 'hearing' | 'review_intro' | 'deduction' | 'resolved';
+  heardQuestionIds: string[];
+  hearingIndex: number;
+  reviewIndex: number;
+  attemptedWrongIds: string[];
+  recordedQuoteId: string | null;
+}
+
+export type InquiryProgressMap = Partial<Record<'ryan' | 'alyssa' | 'noah', InquiryProgress>>;
+
+export interface SourceMapSelections {
+  ryan: SourcePersonId | null;
+  alyssa: SourcePersonId | null;
+  noah: SourcePersonId | null;
+}
 
 export type SourcePersonId = 'unknown_seller' | 'ryan' | 'alyssa' | 'noah' | 'player' | 'next_friend';
 

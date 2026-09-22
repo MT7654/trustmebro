@@ -1,324 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  MessageCircle, 
-  X, 
-  BookmarkCheck, 
-  HelpCircle, 
-  Sparkles, 
-  Check, 
-  ChevronRight,
-  ShieldAlert,
-  Flame
-} from 'lucide-react';
-import { Character, CharacterExpression, EvidenceQuote, PlayerProfile } from '../../types';
+import React, { useEffect } from 'react';
+import { motion } from 'motion/react';
+import { BookmarkCheck, ChevronLeft, ChevronRight, MessageCircle, X } from 'lucide-react';
+import { Character, CharacterExpression, EvidenceQuote, InquiryProgress, PlayerProfile } from '../../types';
 import { CharacterIllustration } from '../CharacterIllustration';
 import { sound } from '../../utils/sound';
+import { nextInquiryPhase } from '../../gameRules';
 
-interface CharacterQuestionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  character: Character;
-  onRecordClue: (quote: EvidenceQuote) => void;
-  isAlreadyRecorded: boolean;
-  playerProfile: PlayerProfile;
-  isReducedMotion?: boolean;
-}
+interface Props { isOpen:boolean; onClose:()=>void; character:Character; onRecordClue:(q:EvidenceQuote)=>void; playerProfile:PlayerProfile; progress:InquiryProgress; onProgressChange:(p:InquiryProgress)=>void; isReducedMotion?:boolean; }
+interface Question { id:string; questionLabel:string; responseDialogue:string; expression:CharacterExpression; isKey?:boolean; quoteId:string; observation:string; wrongFeedback:string; resolution?:string; }
 
-interface QuestionOption {
-  id: string;
-  questionLabel: string;
-  responseDialogue: string;
-  expression: CharacterExpression;
-  isKeyTestimony?: boolean;
-  targetQuoteId: string;
-  playerReflection: string;
-}
-
-const CHARACTER_QUESTIONS: Record<string, QuestionOption[]> = {
-  noah: [
-    {
-      id: 'noah_q1',
-      questionLabel: '“Why did you tell everyone Alyssa verified what was inside?”',
-      responseDialogue: '“Well... she took two puffs right in front of us and didn’t cough. I don’t vape myself, so I just figured if she took a hit and Ryan was chill, it must be safe.”',
-      expression: 'skeptical',
-      isKeyTestimony: true,
-      targetQuoteId: 'quote_noah_relied_ryan',
-      playerReflection: '“Notice what Noah just admitted: he has zero firsthand knowledge. He assumed Alyssa checked it, but Alyssa only took a puff because she assumed Ryan checked it!”'
-    },
-    {
-      id: 'noah_q2',
-      questionLabel: '“Do you know what chemical compounds are in this vape liquid?”',
-      responseDialogue: '“Zero idea, bro. I know as much chemistry as my cat. That’s why I was just backing Ryan’s judgment.”',
-      expression: 'neutral',
-      targetQuoteId: '',
-      playerReflection: '“Noah openly admits he knows nothing about the liquid contents. He is purely repeating social trust.”'
-    },
-    {
-      id: 'noah_q3',
-      questionLabel: '“How long have you known Ryan?”',
-      responseDialogue: '“Since secondary school! We’ve hung out every weekend. That’s why I didn’t question him when he brought the pod over.”',
-      expression: 'smiling',
-      targetQuoteId: '',
-      playerReflection: '“Their long friendship explains why Noah feels comfortable, but personal friendship is not chemical verification.”'
-    }
+export const CHARACTER_QUESTIONS: Record<'noah'|'alyssa'|'ryan', Question[]> = {
+  ryan: [
+    { id:'ryan_q1', questionLabel:'What independent proof did you receive?', responseDialogue:'“I went by what the seller said in chat. There was no certificate or batch result.”', expression:'defensive', isKey:true, quoteId:'quote_ryan_trusted_seller', observation:'Ryan is describing the origin of his confidence.', wrongFeedback:'', resolution:'Ryan did not independently verify the device. His confidence came from the same unknown seller whose claim is being tested.' },
+    { id:'ryan_q2', questionLabel:'Why call these three confirmations?', responseDialogue:'“Noah agreed, Alyssa tried it, and the seller vouched for it. That sounded like three checks.”', expression:'skeptical', quoteId:'', observation:'Three voices can sound independent even when they share one source.', wrongFeedback:'This describes how Ryan counted the reassurance, but not the original source he relied on.' },
+    { id:'ryan_q3', questionLabel:'Can the source be held accountable?', responseDialogue:'“It is an unverified account. I do not have an identity or independent record.”', expression:'alarmed', quoteId:'', observation:'An unaccountable source makes verification harder.', wrongFeedback:'The missing identity matters, but the decisive statement reveals what Ryan treated as proof.' }
   ],
   alyssa: [
-    {
-      id: 'alyssa_q1',
-      questionLabel: '“Did you actually check or inspect what was inside before taking a puff?”',
-      responseDialogue: '“No, I didn’t inspect or test anything! Ryan handed it to me saying it was sweet peach, so I just took two hits. I assumed Ryan checked it beforehand!”',
-      expression: 'worried',
-      isKeyTestimony: true,
-      targetQuoteId: 'quote_alyssa_only_tried',
-      playerReflection: '“Critical admission: Alyssa never inspected the cartridge. Taking two puffs is not verification—she relied entirely on the assumption that Ryan verified it.”'
-    },
-    {
-      id: 'alyssa_q2',
-      questionLabel: '“How are you feeling physically right now?”',
-      responseDialogue: '“I seem okay right now, but that still cannot tell us what is inside or whether it is safe.”',
-      expression: 'worried',
-      isKeyTestimony: false,
-      targetQuoteId: '',
-      playerReflection: '“Immediate appearance is not verification. No reaction right now can establish the contents or safety of an unknown device.”'
-    },
-    {
-      id: 'alyssa_q3',
-      questionLabel: '“Did Ryan mention where he acquired this cartridge?”',
-      responseDialogue: '“He just said he got it through a contact online. He didn’t show me any brand name or paperwork.”',
-      expression: 'neutral',
-      targetQuoteId: '',
-      playerReflection: '“Alyssa confirms Ryan provided no paperwork or verifiable merchant details.”'
-    }
+    { id:'alyssa_q1', questionLabel:'How do you feel right now?', responseDialogue:'“I seem okay right now, but that cannot tell us what is inside or what happens later.”', expression:'worried', quoteId:'', observation:'Immediate effects do not establish contents or future risk.', wrongFeedback:'This rejects “I feel fine” as proof, but does not reveal who Alyssa relied on.' },
+    { id:'alyssa_q2', questionLabel:'Did you inspect it before trying it?', responseDialogue:'“No. Ryan said it was fine, so I took two puffs. I assumed he had checked it.”', expression:'worried', isKey:true, quoteId:'quote_alyssa_only_tried', observation:'Alyssa is separating exposure from verification.', wrongFeedback:'', resolution:'Trying the device was exposure, not a safety test. Alyssa relied on Ryan’s assurance rather than independent evidence.' },
+    { id:'alyssa_q3', questionLabel:'Did you see independent documentation?', responseDialogue:'“No. I saw no label, paperwork, or test result.”', expression:'neutral', quoteId:'', observation:'Missing documentation is useful context.', wrongFeedback:'This confirms evidence was absent, but not whose reassurance replaced it.' }
   ],
-  ryan: [
-    {
-      id: 'ryan_q1',
-      questionLabel: '“What specific lab results or certificates did your seller show you?”',
-      responseDialogue: '“Look, I went by what he told me in chat! He said \'100% legit pure peach bro trust me\'. He didn’t show me any lab sheet or certificate for this batch, but why would he lie to a repeat customer?”',
-      expression: 'defensive',
-      isKeyTestimony: true,
-      targetQuoteId: 'quote_ryan_trusted_seller',
-      playerReflection: '“Direct admission: Ryan has zero test sheets, zero batch verification, and zero lab results. He relied solely on a one-line casual chat text from an anonymous seller.”'
-    },
-    {
-      id: 'ryan_q2',
-      questionLabel: '“Why did you claim there are \'three separate confirmations\'?”',
-      responseDialogue: '“Because Noah backed me up, Alyssa tried it without complaints, and my seller vouched for it! That’s three people saying it’s good, right?!”',
-      expression: 'smiling',
-      targetQuoteId: '',
-      playerReflection: '“Ryan is treating Alyssa and Noah as independent confirmations, ignoring that both were simply relying on his own word!”'
-    },
-    {
-      id: 'ryan_q3',
-      questionLabel: '“Can you contact this seller if someone has an adverse reaction?”',
-      responseDialogue: '“I only have an unverified account with no real identity attached... but come on, nobody seems worried!”',
-      expression: 'alarmed',
-      targetQuoteId: 'quote_telegram_anonymous',
-      playerReflection: '“The seller is completely anonymous and unaccountable. Their reassurance cannot verify an unknown device.”'
-    }
+  noah: [
+    { id:'noah_q1', questionLabel:'Why did Ryan’s word feel convincing?', responseDialogue:'“We have known each other for years. I did not think I needed to question him.”', expression:'smiling', quoteId:'', observation:'Friendship explains confidence, but does not verify a device.', wrongFeedback:'This explains social pressure, not the exact dependency the source map needs.' },
+    { id:'noah_q2', questionLabel:'Do you know what is inside?', responseDialogue:'“No. I was backing Ryan’s judgment, not a test result.”', expression:'neutral', quoteId:'', observation:'Noah has no firsthand knowledge of the contents.', wrongFeedback:'This establishes uncertainty, but does not fully trace how assurance travelled through the group.' },
+    { id:'noah_q3', questionLabel:'Why did you say Alyssa verified it?', responseDialogue:'“She took two puffs and did not cough. I do not vape, so I assumed that meant Ryan had checked it.”', expression:'skeptical', isKey:true, quoteId:'quote_noah_relied_ryan', observation:'Noah’s reassurance ultimately depends on Ryan.', wrongFeedback:'', resolution:'Noah had no firsthand verification. His confidence travelled through Alyssa and returned to Ryan, rather than coming from an independent check.' }
   ]
 };
-
-export const CharacterQuestionModal: React.FC<CharacterQuestionModalProps> = ({
-  isOpen,
-  onClose,
-  character,
-  onRecordClue,
-  isAlreadyRecorded,
-  playerProfile,
-  isReducedMotion = false
-}) => {
-  const questions = CHARACTER_QUESTIONS[character.id] || [];
-  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
-  const [currentExpression, setCurrentExpression] = useState<CharacterExpression>(character.currentExpression);
-  const [currentResponse, setCurrentResponse] = useState<string>(character.initialStatement);
-  const [currentReflection, setCurrentReflection] = useState<string>(
-    `“Let me ask ${character.name} a few targeted questions to understand what they're basing their confidence on.”`
-  );
-  const [activeQuoteId, setActiveQuoteId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      setSelectedQuestionId(null);
-      setCurrentExpression(character.currentExpression);
-      setCurrentResponse(character.initialStatement);
-      setCurrentReflection(
-        `“Let me ask ${character.name} a few targeted questions to understand what they're basing their confidence on.”`
-      );
-      setActiveQuoteId(null);
-    }
-  }, [isOpen, character]);
-
-  if (!isOpen) return null;
-
-  const handleSelectQuestion = (q: QuestionOption) => {
-    sound.playClick();
-    setSelectedQuestionId(q.id);
-    setCurrentExpression(q.expression);
-    setCurrentResponse(q.responseDialogue);
-    setCurrentReflection(q.playerReflection);
-    setActiveQuoteId(q.targetQuoteId || null);
-  };
-
-  const handleRecordClueClick = () => {
-    if (!activeQuoteId) return;
-    sound.playRecordClue();
-    import('../../data/gameData').then(({ ALL_DISCOVERABLE_QUOTES }) => {
-      const evidence = ALL_DISCOVERABLE_QUOTES[activeQuoteId];
-      if (evidence) {
-        onRecordClue(evidence);
-      }
-    });
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-sm select-none">
-      <motion.div
-        initial={{ scale: 0.94, opacity: 0, y: 10 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.94, opacity: 0, y: 10 }}
-        transition={{ duration: isReducedMotion ? 0.05 : 0.2 }}
-        className="bg-slate-900 border-2 border-purple-400 text-slate-100 rounded-xl max-w-xl w-full p-4 sm:p-5 shadow-2xl flex flex-col space-y-3.5 max-h-[95vh] overflow-y-auto"
-      >
-        {/* Header Bar */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-400/50 flex items-center justify-center text-purple-400 shrink-0">
-              <MessageCircle className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-display font-black uppercase px-2 py-0.5 rounded bg-purple-400 text-slate-950">
-                  VERBAL INQUIRY
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  {character.role}
-                </span>
-              </div>
-              <h3 className="font-heading font-black text-sm sm:text-base text-slate-100">
-                Questioning {character.name}
-              </h3>
-            </div>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
-            aria-label="Close Inquiry"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Character Visual & Dialogue Bubble */}
-        <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex items-start gap-4 shadow-inner">
-          <div className="flex flex-col items-center shrink-0">
-            <CharacterIllustration
-              characterId={character.id}
-              expression={currentExpression}
-              size="md"
-            />
-            <span className="mt-1 px-2 py-0.5 rounded text-[10px] font-display font-bold bg-slate-900 border border-slate-700 text-purple-300">
-              {character.name}
-            </span>
-          </div>
-
-          <div className="flex-1 space-y-1">
-            <div className="text-[10px] font-mono text-slate-400 uppercase">
-              {character.name}'s Response:
-            </div>
-            <p className="text-xs sm:text-sm text-slate-100 font-body leading-relaxed">
-              {currentResponse}
-            </p>
-          </div>
-        </div>
-
-        {/* Question Selector List */}
-        <div className="space-y-2">
-          <div className="text-[11px] font-display font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-            <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
-            <span>Select a question to ask:</span>
-          </div>
-
-          <div className="space-y-1.5">
-            {questions.map((q) => {
-              const isSelected = selectedQuestionId === q.id;
-              return (
-                <button
-                  key={q.id}
-                  onClick={() => handleSelectQuestion(q)}
-                  className={`w-full p-2.5 rounded-lg border text-left text-xs transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    isSelected
-                      ? 'bg-purple-950/80 border-purple-400 text-purple-100 shadow-md ring-1 ring-purple-400/40'
-                      : 'bg-slate-950/70 border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-slate-800/80'
-                  }`}
-                >
-                  <span className="font-body leading-snug">{q.questionLabel}</span>
-                  <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${isSelected ? 'text-purple-300 translate-x-0.5' : 'text-slate-600'}`} />
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Player Character Reflection Box */}
-        <div className="bg-slate-950 border border-slate-800 rounded-lg p-3 flex items-start gap-3 shadow-inner">
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-800 border border-amber-400/50 shrink-0 mt-0.5">
-            <CharacterIllustration
-              characterId="player"
-              playerGender={playerProfile.gender}
-              expression={activeQuoteId ? 'skeptical' : 'neutral'}
-              size="sm"
-              className="w-8 h-8"
-            />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-display font-black text-amber-400">
-                {playerProfile.name}'s Deductive Take:
-              </span>
-              {activeQuoteId && (
-                <span className="text-[10px] font-mono font-bold bg-purple-400 text-slate-950 px-1.5 py-0.2 rounded">
-                  KEY TESTIMONY
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-slate-200 font-body mt-0.5 leading-relaxed italic">
-              {currentReflection}
-            </p>
-          </div>
-        </div>
-
-        {/* Action Buttons Bar */}
-        <div className="flex items-center justify-between pt-1 border-t border-slate-800 gap-2">
-          <button
-            onClick={onClose}
-            className="px-3.5 py-1.5 text-xs font-display uppercase tracking-wider text-slate-400 hover:text-white cursor-pointer"
-          >
-            Finished Talking
-          </button>
-
-          {/* Active Record Clue Button */}
-          {activeQuoteId ? (
-            <motion.button
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={handleRecordClueClick}
-              className="px-4 py-2 bg-purple-400 hover:bg-purple-300 text-slate-950 font-heading font-black text-xs uppercase tracking-wider rounded border border-white flex items-center gap-2 shadow-[0_0_15px_rgba(192,132,252,0.4)] cursor-pointer"
-            >
-              <BookmarkCheck className="w-4 h-4 text-slate-950" />
-              <span>RECORD TESTIMONY IN CASE FILE</span>
-            </motion.button>
-          ) : (
-            <div className="text-[11px] text-slate-400 font-mono italic">
-              Ask questions to reveal what {character.name} is relying on...
-            </div>
-          )}
-        </div>
-      </motion.div>
-    </div>
-  );
+export const CharacterQuestionModal:React.FC<Props> = ({isOpen,onClose,character,onRecordClue,playerProfile,progress,onProgressChange,isReducedMotion=false}) => {
+  const questions=CHARACTER_QUESTIONS[character.id as 'noah'|'alyssa'|'ryan']||[];
+  const index=progress.phase==='hearing'?progress.hearingIndex:progress.reviewIndex;
+  const current=questions[Math.min(index,questions.length-1)];
+  useEffect(()=>{ if(!isOpen)return; const key=(e:KeyboardEvent)=>{ if(progress.phase!=='deduction')return; if(e.key==='ArrowLeft')onProgressChange({...progress,reviewIndex:(progress.reviewIndex-1+questions.length)%questions.length}); if(e.key==='ArrowRight')onProgressChange({...progress,reviewIndex:(progress.reviewIndex+1)%questions.length}); }; window.addEventListener('keydown',key); return()=>window.removeEventListener('keydown',key); },[isOpen,progress,questions.length,onProgressChange]);
+  if(!isOpen||!current)return null;
+  const advance=()=>{ sound.playClick(); const heard=Array.from(new Set([...progress.heardQuestionIds,current.id])); if(nextInquiryPhase(progress.hearingIndex,questions.length)==='hearing'){const next=progress.hearingIndex+1;onProgressChange({...progress,heardQuestionIds:Array.from(new Set([...heard,questions[next].id])),hearingIndex:next});}else onProgressChange({...progress,heardQuestionIds:heard,phase:'review_intro',reviewIndex:0}); };
+  const move=(d:number)=>{sound.playClick();onProgressChange({...progress,reviewIndex:(progress.reviewIndex+d+questions.length)%questions.length});};
+  const record=async()=>{if(progress.phase!=='deduction')return;if(!current.isKey||!current.quoteId){sound.playBuzzer();onProgressChange({...progress,attemptedWrongIds:Array.from(new Set([...progress.attemptedWrongIds,current.id]))});return;}const {ALL_DISCOVERABLE_QUOTES}=await import('../../data/gameData');const evidence=ALL_DISCOVERABLE_QUOTES[current.quoteId];if(!evidence)return;sound.playRecordClue();onProgressChange({...progress,phase:'resolved',recordedQuoteId:evidence.id});onRecordClue(evidence);};
+  const label=progress.phase==='hearing'?`Listen ${progress.hearingIndex+1} of 3`:progress.phase==='resolved'?'Clue resolved':'Choose the decisive statement';
+  return <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/90 p-3 backdrop-blur-sm"><motion.section initial={{opacity:0,scale:.97}} animate={{opacity:1,scale:1}} transition={{duration:isReducedMotion?.01:.18}} className="flex h-[min(92dvh,720px)] w-[min(94vw,1100px)] flex-col overflow-hidden rounded-2xl border border-purple-400/60 bg-slate-900 shadow-2xl">
+    <header className="flex shrink-0 items-center justify-between border-b border-slate-700 px-5 py-3"><div className="flex items-center gap-3"><MessageCircle className="text-purple-300"/><div><p className="text-[10px] font-display font-black uppercase tracking-widest text-purple-300">Verbal inquiry · {label}</p><h2 className="font-heading text-xl font-black">Questioning {character.name}</h2></div></div><button onClick={onClose} aria-label="Close inquiry" className="rounded-lg p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300"><X/></button></header>
+    {progress.phase==='review_intro'?<div className="grid min-h-0 flex-1 place-items-center p-8 text-center"><div className="max-w-xl"><p className="font-display text-xs font-black uppercase tracking-[.2em] text-amber-300">Account complete</p><h3 className="mt-3 font-heading text-3xl font-black">Now test what you heard</h3><p className="mt-4 leading-relaxed text-slate-300">Review all three statements. Record the one that reveals where {character.name}’s confidence actually came from. Context may be true without being the decisive clue.</p><button onClick={()=>onProgressChange({...progress,phase:'deduction',reviewIndex:0})} className="mt-7 rounded-xl bg-amber-300 px-7 py-4 font-heading font-black uppercase text-slate-950">Review the statements</button></div></div>:<div className="grid min-h-0 flex-1 lg:grid-cols-[38%_62%]">
+      <div className="relative flex min-h-0 items-end justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_35%,rgba(168,85,247,.2),transparent_55%),linear-gradient(180deg,#070b1d,#151126)] p-4"><CharacterIllustration characterId={character.id} expression={current.expression} size="lg" className="max-h-full w-auto object-contain"/><div className="absolute bottom-4 left-4 rounded bg-slate-950/85 px-3 py-1 font-display font-bold text-purple-200">{character.name}</div></div>
+      <div className="flex min-h-0 flex-col overflow-y-auto p-5"><p className="mb-3 text-[11px] font-display font-bold uppercase tracking-widest text-amber-300">Statement {index+1} / {questions.length}</p><h3 className="text-sm font-semibold text-slate-400">{current.questionLabel}</h3><blockquote className="mt-3 text-xl leading-relaxed">{current.responseDialogue}</blockquote><div className="mt-4 rounded-xl border-l-4 border-amber-400 bg-slate-950/70 p-4 text-sm text-slate-300"><strong className="text-amber-300">{playerProfile.name} notices:</strong> {current.observation}</div>
+      {progress.attemptedWrongIds.includes(current.id)&&<div role="alert" className="mt-3 rounded-lg border border-rose-500 bg-rose-950/70 p-3 text-sm text-rose-100"><strong>Not the decisive statement.</strong> {current.wrongFeedback}</div>}{progress.phase==='resolved'&&<div className="mt-4 rounded-xl border border-emerald-400/60 bg-emerald-950/50 p-4 text-sm text-emerald-50"><strong className="block font-display uppercase text-emerald-300">Recorded in the case file</strong>{current.resolution}</div>}
+      <div className="mt-auto pt-5">{progress.phase==='hearing'&&<button onClick={advance} className="w-full rounded-xl bg-amber-400 px-5 py-3 font-heading font-black uppercase text-slate-950">{index<2?'Next statement':'Finish listening'} <ChevronRight className="ml-2 inline h-4 w-4"/></button>}{progress.phase==='deduction'&&<><div className="mb-3 flex items-center justify-between gap-3"><button onClick={()=>move(-1)} aria-label="Previous statement" className="rounded-lg border border-slate-600 p-2"><ChevronLeft/></button><span className="text-center text-xs text-slate-400">Compare every statement, then record your deduction.</span><button onClick={()=>move(1)} aria-label="Next statement" className="rounded-lg border border-slate-600 p-2"><ChevronRight/></button></div><button onClick={record} className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-300 px-5 py-3 font-heading font-black uppercase text-slate-950"><BookmarkCheck className="h-5 w-5"/>Record this statement in case file</button></>}{progress.phase==='resolved'&&<button onClick={onClose} className="w-full rounded-xl bg-emerald-300 px-5 py-3 font-heading font-black uppercase text-slate-950">Return to the room</button>}</div></div>
+    </div>}
+  </motion.section></div>;
 };

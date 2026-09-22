@@ -28,6 +28,7 @@ import { EvidenceQuote, PinnedClaim, EvidenceCategory, TutorialStep } from '../t
 import { EvidenceThumbnail } from './EvidenceThumbnail';
 import { PinnedClaimSection } from './PinnedClaimSection';
 import { sound } from '../utils/sound';
+import { canChallengeFinalGate, getFinalGateEvidenceProgress } from '../gameRules';
 
 interface EvidenceDrawerProps {
   isOpen: boolean;
@@ -36,12 +37,14 @@ interface EvidenceDrawerProps {
   activeClaim: PinnedClaim;
   collectedQuotes: EvidenceQuote[];
   selectedQuoteId: string | null;
+  selectedFinalQuoteIds?: string[];
+  onToggleFinalQuote?: (quoteId: string) => void;
+  isFinalGateUnlocked?: boolean;
   onSelectClaim: (claimId: string) => void;
   onSelectQuote: (quoteId: string) => void;
   onPresentQuote: () => void;
   mismatchFeedback: string | null;
   onDismissMismatch: () => void;
-  onOpenSourceMap?: () => void;
   presentedQuoteIds?: string[];
   exchangeMisses?: number;
   onRetryExchange?: () => void;
@@ -56,12 +59,14 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
   activeClaim,
   collectedQuotes,
   selectedQuoteId,
+  selectedFinalQuoteIds = [],
+  onToggleFinalQuote,
+  isFinalGateUnlocked = false,
   onSelectClaim,
   onSelectQuote,
   onPresentQuote,
   mismatchFeedback,
   onDismissMismatch,
-  onOpenSourceMap,
   presentedQuoteIds = [],
   exchangeMisses = 0,
   onRetryExchange,
@@ -77,6 +82,9 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
   const selectedQuote = collectedQuotes.find(q => q.id === selectedQuoteId);
   const isSelectedQuoteAlreadyPresented = selectedQuote ? presentedQuoteIds.includes(selectedQuote.id) : false;
   const isExchangeLost = exchangeMisses >= 3;
+  const isFinalGate = activeClaim.id === 'claim_ryan_confirmations';
+  const finalProgress = getFinalGateEvidenceProgress(selectedFinalQuoteIds);
+  const finalReady = canChallengeFinalGate(selectedFinalQuoteIds);
 
   const filteredQuotes = categoryFilter === 'all' 
     ? collectedQuotes 
@@ -133,10 +141,10 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 280 }}
-        className="relative z-10 w-full max-w-2xl h-full bg-slate-900 border-l-2 border-slate-700 text-slate-100 flex flex-col shadow-2xl overflow-hidden"
+        className="evidence-workspace relative z-10 h-full w-[94vw] max-w-[1440px] bg-slate-900 border-l-2 border-slate-700 text-slate-100 flex flex-col shadow-2xl overflow-hidden"
       >
         {/* Drawer Header */}
-        <div className="bg-slate-950 text-white px-4 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between shrink-0">
+        <div className="evidence-header bg-slate-950 text-white px-4 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center font-bold shadow-md">
               <BookOpen className="w-6 h-6 text-slate-950" />
@@ -204,8 +212,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
               { id: 'all', label: 'All Items' },
               { id: 'physical', label: '📦 Physical' },
               { id: 'digital', label: '📱 Digital' },
-              { id: 'verbal', label: '💬 Witness' },
-              { id: 'source_map', label: '🗺️ Source Map' }
+              { id: 'verbal', label: '💬 Witness' }
             ].map((filter) => (
               <button
                 key={filter.id}
@@ -226,7 +233,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
         )}
 
         {/* Target Statement Banner */}
-        <div className="bg-slate-950/90 p-4 border-b border-slate-800 shrink-0">
+        <div className="evidence-target bg-slate-950/90 p-4 border-b border-slate-800 shrink-0">
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <span className="text-[10px] font-display font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
               <Pin className="w-3 h-3 text-amber-400" />
@@ -287,32 +294,16 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
         </div>
 
         {/* Scrollable Quotes / Cards */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 space-y-4">
           {activeTab === 'quotes' ? (
             <div className="space-y-3">
-              {/* Source Map Workbench Callout */}
-              {onOpenSourceMap && (
-                <div className="p-3.5 bg-gradient-to-r from-cyan-950/80 to-slate-900 border border-cyan-500 rounded-lg flex items-center justify-between gap-3 shadow-md">
-                  <div className="flex items-center gap-2.5">
-                    <Network className="w-5 h-5 text-cyan-400 shrink-0" />
-                    <div>
-                      <div className="font-heading font-black text-xs text-cyan-200 uppercase tracking-wider">
-                        Source Map Workbench
-                      </div>
-                      <div className="text-[11px] text-slate-300 font-body">
-                        Trace origin chain: Unknown Seller ➔ Ryan ➔ Alyssa & Noah
-                      </div>
-                    </div>
+              {isFinalGate && (
+                <div className="rounded-xl border border-cyan-400/70 bg-cyan-950/35 p-3.5">
+                  <div className="font-heading text-sm font-black uppercase text-cyan-200">Trace all three voices</div>
+                  <p className="mt-1 text-xs text-slate-300">Select one established finding for Noah, Alyssa and Ryan. You are using the case file directly—there is no separate synthesis puzzle.</p>
+                  <div className="mt-3 grid grid-cols-3 gap-2 text-[10px] font-display font-bold uppercase">
+                    {[['Noah',finalProgress.noah],['Alyssa',finalProgress.alyssa],['Ryan',finalProgress.ryan]].map(([label,done])=><div key={String(label)} className={`rounded border px-2 py-1.5 text-center ${done?'border-emerald-400 bg-emerald-950 text-emerald-300':'border-slate-700 bg-slate-950 text-slate-500'}`}>{done?'✓ ':''}{String(label)}</div>)}
                   </div>
-                  <button
-                    onClick={() => {
-                      sound.playClick();
-                      onOpenSourceMap();
-                    }}
-                    className="px-3 py-1 bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-display font-black text-xs uppercase tracking-wider rounded border border-black shadow shrink-0 cursor-pointer"
-                  >
-                    Open Map
-                  </button>
                 </div>
               )}
 
@@ -327,9 +318,9 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
                   {filteredQuotes.map((quote) => {
-                    const isSelected = selectedQuoteId === quote.id;
+                    const isSelected = isFinalGate ? selectedFinalQuoteIds.includes(quote.id) : selectedQuoteId === quote.id;
                     const isCaseCard = quote.id === 'card_one_origin_three_voices' || quote.tag.includes('CASE CARD');
                     const isAlreadyPresented = presentedQuoteIds.includes(quote.id);
 
@@ -338,6 +329,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                         type="button"
                         key={quote.id}
                         id={`evidence-card-${quote.id}`}
+                        data-tutorial-target={`evidence-card-${quote.id}`}
                         aria-pressed={isSelected}
                         aria-disabled={isAlreadyPresented}
                         onClick={() => {
@@ -346,10 +338,11 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                             return;
                           }
                           sound.playPaperSlide();
-                          onSelectQuote(quote.id);
+                          if (isFinalGate) onToggleFinalQuote?.(quote.id);
+                          else onSelectQuote(quote.id);
                           onDismissMismatch();
                         }}
-                        className={`w-full p-4 rounded-xl border transition-all relative text-left ${
+                        className={`evidence-card w-full min-h-[180px] p-4 rounded-xl border transition-all relative text-left ${
                           isAlreadyPresented
                             ? 'opacity-40 grayscale border-dashed border-slate-700 bg-slate-950 cursor-not-allowed'
                             : isSelected
@@ -400,10 +393,11 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                         </div>
 
                         {/* Content Layout: Large Thumbnail + Neutral Description + Quote */}
-                        <div className="flex flex-col sm:flex-row items-start gap-3.5">
+                        <div className="flex items-start gap-3.5">
                           <div className="shrink-0 self-center sm:self-start">
                             <EvidenceThumbnail 
                               type={quote.thumbnailType || 'box'} 
+                              evidenceId={quote.id}
                               size="lg" 
                               className={isSelected ? 'border-amber-400 shadow-md' : ''} 
                             />
@@ -430,10 +424,10 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
                           <div className="mt-3 pt-2.5 border-t border-amber-400/40 flex items-center justify-between text-xs font-display font-bold text-amber-300 bg-amber-950/30 -mx-4 -mb-4 p-2.5 px-4 rounded-b-xl">
                             <span className="flex items-center gap-1.5">
                               <CheckCircle2 className="w-4 h-4 text-amber-400" />
-                              Selected against {activeClaim.speakerName} ({activeClaim.keyWordOriginal})
+                              {isFinalGate ? 'Linked into the final reassurance chain' : `Selected against ${activeClaim.speakerName} (${activeClaim.keyWordOriginal})`}
                             </span>
                             <span className="uppercase text-[10px] bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded font-heading font-black">
-                              Click Present Below
+                              {isFinalGate ? 'Finding linked' : 'Click Present Below'}
                             </span>
                           </div>
                         )}
@@ -553,9 +547,10 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
         <div className="p-4 bg-slate-950 border-t border-slate-800 flex flex-col gap-2 shrink-0">
           <button
             id="drawer-present-quote-btn"
-            disabled={!selectedQuote || activeClaim.isCorrected || isSelectedQuoteAlreadyPresented || isExchangeLost}
+            data-tutorial-target="drawer-present-quote-btn"
+            disabled={(isFinalGate ? !finalReady || !isFinalGateUnlocked : !selectedQuote || isSelectedQuoteAlreadyPresented) || activeClaim.isCorrected || isExchangeLost}
             onClick={() => {
-              if (selectedQuote && !activeClaim.isCorrected && !isSelectedQuoteAlreadyPresented && !isExchangeLost) {
+              if ((isFinalGate ? finalReady && isFinalGateUnlocked : selectedQuote && !isSelectedQuoteAlreadyPresented) && !activeClaim.isCorrected && !isExchangeLost) {
                 onPresentQuote();
                 if (tutorialStep === 'crossexam_present_evidence' || (typeof tutorialStep === 'string' && tutorialStep.startsWith('crossexam_'))) {
                   onAdvanceTutorialStep?.('crossexam_completed');
@@ -563,7 +558,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
               }
             }}
             className={`w-full py-3.5 px-4 font-heading font-black text-sm uppercase tracking-widest rounded-lg border transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg ${
-              !selectedQuote || activeClaim.isCorrected || isSelectedQuoteAlreadyPresented || isExchangeLost
+              (isFinalGate ? !finalReady || !isFinalGateUnlocked : !selectedQuote || isSelectedQuoteAlreadyPresented) || activeClaim.isCorrected || isExchangeLost
                 ? 'bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed'
                 : tutorialStep === 'crossexam_present_evidence'
                 ? 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 border-white ring-4 ring-yellow-400 animate-pulse scale-105 shadow-[0_0_25px_rgba(250,204,21,0.9)]'
@@ -574,6 +569,8 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
             <span>
               {activeClaim.isCorrected
                 ? 'GATE ALREADY RESOLVED'
+                : isFinalGate
+                ? finalReady ? 'PRESENT 3 LINKED FINDINGS & CHALLENGE RYAN' : `LINK ALL 3 VOICES (${Object.values(finalProgress).filter(Boolean).length}/3)`
                 : selectedQuote
                 ? `PRESENT EVIDENCE & CHALLENGE ${activeClaim.speakerName}`
                 : 'SELECT AN ITEM ABOVE TO PRESENT'}

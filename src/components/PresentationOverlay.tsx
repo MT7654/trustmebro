@@ -126,7 +126,7 @@ export const PresentationOverlay: React.FC<PresentationOverlayProps> = ({
             {/* Content: Large Illustrated Thumbnail + Observation Note */}
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
               <div className="relative group shrink-0">
-                <EvidenceThumbnail type={evidence.thumbnailType} size="xl" className="border-2 border-amber-400/80 shadow-lg" />
+                <EvidenceThumbnail type={evidence.thumbnailType} evidenceId={evidence.id} size="xl" className="border-2 border-amber-400/80 shadow-lg" />
                 <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-950 p-1 rounded-full shadow">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>

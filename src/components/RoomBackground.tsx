@@ -37,9 +37,9 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
   };
 
   return (
-    <div className="relative w-full h-[280px] md:h-[330px] bg-slate-950 rounded-[1.75rem] overflow-hidden select-none flex flex-col justify-between shadow-2xl ring-1 ring-white/10">
+    <div className="courtroom-room-stage relative h-full min-h-0 w-full bg-slate-950 bg-cover rounded-[1.75rem] overflow-hidden select-none flex flex-col justify-between shadow-2xl ring-1 ring-white/10" style={{backgroundImage:"url('/art/environments/living-room-empty-master.png')",backgroundPosition:selectedCharacterId==='noah'?'35% 50%':selectedCharacterId==='alyssa'?'68% 50%':'50% 50%'}}>
       {/* Background Living Room & Window Layer */}
-      <div className={`absolute inset-0 bg-gradient-to-b ${getRoomLighting()} transition-colors duration-700`}>
+      <div className={`absolute inset-0 bg-gradient-to-b ${getRoomLighting()} opacity-70 transition-colors duration-700`}>
         {/* City Window Silhouette */}
         <div className="absolute top-0 right-6 sm:right-16 w-36 sm:w-60 h-24 bg-indigo-950/30 border-b border-x border-slate-800/80 rounded-b flex items-center justify-around opacity-50">
           <div className="w-1 h-full bg-slate-800/40" />
@@ -58,7 +58,7 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
       </div>
 
       {/* Top Scene Status Indicator */}
-      <div className="relative z-10 px-3 py-1.5 sm:px-4 flex items-center justify-between text-[11px] font-display border-b border-slate-800/60 bg-slate-950/60 backdrop-blur-xs">
+      <div className="courtroom-scene-status absolute inset-x-0 top-0 z-30 px-3 py-1.5 sm:px-4 flex items-center justify-between text-[11px] font-display border-b border-slate-800/60 bg-slate-950/70 backdrop-blur-xs">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-slate-300 uppercase tracking-wider font-bold text-[10px] sm:text-[11px]">
@@ -69,7 +69,7 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
         <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-400">
           <span className="hidden xs:inline">EVIDENCE GATES:</span>
           <div className="flex items-center gap-1">
-            {[1, 2, 3].map(gateNum => (
+            {[1, 2, 3, 4].map(gateNum => (
               <span
                 key={gateNum}
                 className={`w-3.5 h-3.5 rounded text-[8px] font-black flex items-center justify-center border ${
@@ -86,23 +86,24 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
       </div>
 
       {/* Character Staging (Visual Novel Theater: Active in center, receded friends on sides) */}
-      <div className="relative z-10 flex-1 flex items-end justify-center px-4 sm:px-12 pb-2 gap-8 sm:gap-24">
+      <div className="courtroom-character-stage absolute inset-0 z-10 flex items-end justify-center px-4 sm:px-12 pb-5 pt-6 gap-8 sm:gap-24">
         {/* Left Character: Noah */}
         <button
           id="room-select-noah"
+          data-active={selectedCharacterId === 'noah'}
           onClick={() => {
             sound.playClick();
             onSelectCharacter('noah');
           }}
-          className={`relative flex flex-col items-center transition-all cursor-pointer ${
+          className={`courtroom-character-button relative flex flex-col items-center transition-all cursor-pointer ${
             selectedCharacterId === 'noah'
-              ? 'scale-125 z-20 opacity-100 -translate-y-2'
+              ? 'scale-110 z-20 opacity-100 -translate-y-1'
               : 'scale-90 z-10 opacity-55 hover:opacity-90 hover:scale-95'
           }`}
           title="Speak to Noah"
         >
           <div className="relative">
-            <CharacterIllustration characterId="noah" expression={characters.noah.currentExpression} size="lg" className="h-52 w-40" />
+            <CharacterIllustration characterId="noah" expression={characters.noah.currentExpression} size="lg" className="courtroom-character-art h-52 w-40" />
             {selectedCharacterId === 'noah' && (
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 bg-emerald-500 text-black text-[8px] font-display font-black uppercase rounded shadow">
                 ACTIVE
@@ -117,19 +118,20 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
         {/* Center Character: Ryan (Host) */}
         <button
           id="room-select-ryan"
+          data-active={selectedCharacterId === 'ryan'}
           onClick={() => {
             sound.playClick();
             onSelectCharacter('ryan');
           }}
-          className={`relative flex flex-col items-center transition-all cursor-pointer ${
+          className={`courtroom-character-button relative flex flex-col items-center transition-all cursor-pointer ${
             selectedCharacterId === 'ryan'
-              ? 'scale-125 z-20 opacity-100 -translate-y-2'
+              ? 'scale-110 z-20 opacity-100 -translate-y-1'
               : 'scale-90 z-10 opacity-55 hover:opacity-90 hover:scale-95'
           }`}
           title="Speak to Ryan"
         >
           <div className="relative">
-            <CharacterIllustration characterId="ryan" expression={characters.ryan.currentExpression} size="lg" className="h-52 w-40" />
+            <CharacterIllustration characterId="ryan" expression={characters.ryan.currentExpression} size="lg" className="courtroom-character-art h-52 w-40" />
             {selectedCharacterId === 'ryan' && (
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 bg-amber-400 text-black text-[8px] font-display font-black uppercase rounded shadow">
                 ACTIVE
@@ -144,19 +146,20 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
         {/* Right Character: Alyssa */}
         <button
           id="room-select-alyssa"
+          data-active={selectedCharacterId === 'alyssa'}
           onClick={() => {
             sound.playClick();
             onSelectCharacter('alyssa');
           }}
-          className={`relative flex flex-col items-center transition-all cursor-pointer ${
+          className={`courtroom-character-button relative flex flex-col items-center transition-all cursor-pointer ${
             selectedCharacterId === 'alyssa'
-              ? 'scale-125 z-20 opacity-100 -translate-y-2'
+              ? 'scale-110 z-20 opacity-100 -translate-y-1'
               : 'scale-90 z-10 opacity-55 hover:opacity-90 hover:scale-95'
           }`}
           title="Speak to Alyssa"
         >
           <div className="relative">
-            <CharacterIllustration characterId="alyssa" expression={characters.alyssa.currentExpression} size="lg" className="h-52 w-40" />
+            <CharacterIllustration characterId="alyssa" expression={characters.alyssa.currentExpression} size="lg" className="courtroom-character-art h-52 w-40" />
             {selectedCharacterId === 'alyssa' && (
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 bg-purple-400 text-black text-[8px] font-display font-black uppercase rounded shadow">
                 ACTIVE
@@ -170,19 +173,11 @@ export const RoomBackground: React.FC<RoomBackgroundProps> = ({
       </div>
 
       {/* Foreground Table & Subtle Objects */}
-      <div className="relative z-10 h-7 bg-slate-900/95 border-t border-slate-800 px-3 sm:px-4 flex items-center justify-between text-[10px] font-display text-slate-400">
+      <div className="courtroom-table-overlay absolute inset-x-0 bottom-0 z-30 h-7 bg-slate-900/90 border-t border-slate-800 px-3 sm:px-4 flex items-center justify-between text-[10px] font-display text-slate-400 backdrop-blur-xs">
         <div className="flex items-center gap-2">
           {/* Player Presence Tag */}
           <div className="flex items-center gap-1.5 px-1.5 py-0.2 rounded bg-slate-950 border border-slate-700 text-slate-200">
-            <div className="w-3.5 h-3.5 rounded-full overflow-hidden bg-slate-800 shrink-0">
-              <CharacterIllustration
-                characterId="player"
-                playerGender={playerProfile.gender}
-                expression="neutral"
-                size="sm"
-                className="w-3.5 h-3.5"
-              />
-            </div>
+            <CharacterIllustration characterId="player" playerGender={playerProfile.gender} expression="neutral" size="sm" variant="avatar" className="h-6 w-6" />
             <span className="font-bold text-amber-400">{playerProfile.name}</span>
             <span className="text-[9px] text-slate-400">(Your Seat)</span>
           </div>

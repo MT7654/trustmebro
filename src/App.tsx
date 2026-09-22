@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   INITIAL_CHARACTERS, 
@@ -33,32 +33,53 @@ import { AhaCutIn } from './components/AhaCutIn';
 import { TrustGraphModal } from './components/TrustGraphModal';
 import { EndingModal } from './components/EndingModal';
 import { CaseBriefingModal } from './components/CaseBriefingModal';
-import { SourceMapModal } from './components/SourceMapModal';
 import { LostExchangeModal } from './components/LostExchangeModal';
-import { StructureOverviewModal } from './components/StructureOverviewModal';
 import { HowToPlayModal } from './components/HowToPlayModal';
-import { TutorialGuide } from './components/TutorialGuide';
-import { canAddObjectToEvidenceInventory, getInvestigationClueLesson, REQUIRED_INVESTIGATION_EVIDENCE_IDS } from './gameRules';
+import { CrossExamPractice } from './components/CrossExamPractice';
+import { DisplayModePrompt } from './components/DisplayModePrompt';
+import { useFullscreen } from './hooks/useFullscreen';
+import { canAddObjectToEvidenceInventory, canChallengeFinalGate, canUnlockFinalGate, getFinalGateEvidenceProgress, getInvestigationClueLesson, REQUIRED_INVESTIGATION_EVIDENCE_IDS } from './gameRules';
 import { sound } from './utils/sound';
+import { music } from './utils/music';
 import { AlertTriangle, Network, ShieldCheck, Flame, Info, Sparkles, Pin, Bookmark, Quote, Swords } from 'lucide-react';
 
 export default function App() {
-  const [gameState, setGameState] = useState<'title' | 'setup' | 'intro' | 'investigation' | 'crossexam'>('title');
+  const [gameState, setGameState] = useState<'title' | 'display' | 'setup' | 'intro' | 'investigation' | 'crossexam'>('title');
+  const [hasSeenDisplayPrompt,setHasSeenDisplayPrompt]=useState(false);
+  const fullscreen=useFullscreen();
   const [playerProfile, setPlayerProfile] = useState<PlayerProfile>({ name: 'Sam', gender: 'male' });
   const [isReducedMotion, setIsReducedMotion] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isMusicEnabled, setIsMusicEnabled] = useState<boolean>(() => music.isEnabled());
 
   // Tutorial state
   const [tutorialStep, setTutorialStep] = useState<TutorialStep>('none');
   const [isTutorialEnabled, setIsTutorialEnabled] = useState<boolean>(true);
-  const [isStructureOverviewOpen, setIsStructureOverviewOpen] = useState<boolean>(false);
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState<boolean>(false);
+  const [isCrossExamPracticeOpen, setIsCrossExamPracticeOpen] = useState(false);
+  const [pendingCrossExamPractice, setPendingCrossExamPractice] = useState(false);
+  const [hasUsedReconsideration, setHasUsedReconsideration] = useState(false);
+  const [canonicalEndingType, setCanonicalEndingType] = useState<EndingType | null>(null);
+
+  useEffect(() => {
+    if (gameState === 'investigation') music.play('investigation');
+    else if (gameState === 'crossexam') music.play('courtroom');
+    else music.play('none');
+  }, [gameState]);
+
+  useEffect(() => {
+    const resume = () => music.resume();
+    window.addEventListener('pointerdown', resume, { once: true });
+    window.addEventListener('keydown', resume, { once: true });
+    return () => { window.removeEventListener('pointerdown', resume); window.removeEventListener('keydown', resume); };
+  }, [gameState, isMusicEnabled]);
 
   const [characters, setCharacters] = useState<Record<string, Character>>(INITIAL_CHARACTERS);
   const [pinnedClaims, setPinnedClaims] = useState<PinnedClaim[]>(INITIAL_PINNED_CLAIMS);
   const [activeClaimId, setActiveClaimId] = useState<string>('claim_ryan_appearance');
   const [collectedQuotes, setCollectedQuotes] = useState<EvidenceQuote[]>([]);
   const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
+  const [selectedFinalQuoteIds, setSelectedFinalQuoteIds] = useState<string[]>([]);
 
   const [hotspots, setHotspots] = useState<InvestigationHotspot[]>(INVESTIGATION_HOTSPOTS);
 
@@ -75,7 +96,6 @@ export default function App() {
   
   // Modals & Cinematic Triggers
   const [isEvidenceDrawerOpen, setIsEvidenceDrawerOpen] = useState<boolean>(false);
-  const [isSourceMapOpen, setIsSourceMapOpen] = useState<boolean>(false);
   const [activeBreakthrough, setActiveBreakthrough] = useState<{ claim: PinnedClaim } | null>(null);
   const [isAhaCutInActive, setIsAhaCutInActive] = useState<boolean>(false);
   const [cutInCustomText, setCutInCustomText] = useState<string>('AHA!');
@@ -88,7 +108,7 @@ export default function App() {
   // Check if all primary contradictions are resolved
   const solvedCount = pinnedClaims.filter(c => c.isCorrected).length;
   const canBreakLoop = pinnedClaims.every(c => c.isCorrected);
-  const hasEarnedCaseCard = collectedQuotes.some(q => q.id === 'card_one_origin_three_voices');
+  const isFinalGateUnlocked = canUnlockFinalGate(pinnedClaims.filter(c => c.isCorrected).map(c => c.id));
 
   // Handle collecting evidence during the Investigation segment
   const handleCollectInvestigationEvidence = (quote: EvidenceQuote) => {
@@ -121,40 +141,7 @@ export default function App() {
     setGameState('crossexam');
     setSelectedCharacterId('ryan');
     setActiveClaimId('claim_ryan_appearance');
-    if (isTutorialEnabled && tutorialStep !== 'crossexam_completed') {
-      setTutorialStep('crossexam_press_statement');
-    }
-  };
-
-  // Handle awarding the Case Card from the Source Map
-  const handleAwardCaseCard = () => {
-    sound.playTakeThat();
-    const caseCardQuote: EvidenceQuote = {
-      id: 'card_one_origin_three_voices',
-      speakerId: 'player',
-      speakerName: 'Investigation Finding',
-      category: 'source_map',
-      title: '“One origin, three voices”',
-      thumbnailType: 'source_map',
-      neutralDescription: 'Completed dependency map proving that Noah and Alyssa relied on Ryan, who relied on the unknown seller. Three apparently separate confirmations collapse into a single unverified source.',
-      quote: 'Ryan relied on an unknown seller; Alyssa and Noah relied on Ryan. Three apparently separate confirmations collapse into a single unverified source.',
-      context: 'Synthesized via Interactive Source Dependency Map',
-      contradictsClaimId: 'claim_ryan_confirmations',
-      tag: 'CASE CARD (STRUCTURAL MAP)',
-      itemDetails: 'The structural proof that three apparent confirmations are really just one unverified claim echoed around the room.'
-    };
-
-    setCollectedQuotes(prev => {
-      const alreadyHas = prev.some(q => q.id === caseCardQuote.id);
-      if (!alreadyHas) {
-        return [...prev, caseCardQuote];
-      }
-      return prev;
-    });
-
-    setSelectedQuoteId(caseCardQuote.id);
-    setActiveClaimId('claim_ryan_confirmations');
-    setSelectedCharacterId('ryan');
+    if (isTutorialEnabled && tutorialStep !== 'crossexam_completed') setPendingCrossExamPractice(true);
   };
 
   // Handle Pressing an inquiry on a character
@@ -187,7 +174,6 @@ export default function App() {
         }
         return prev;
       });
-      setSelectedQuoteId(quote.id);
       setRecentlyCollectedQuote(quote);
     } else {
       setRecentlyCollectedQuote(null);
@@ -197,31 +183,47 @@ export default function App() {
   // Handle Presenting Evidence against the Pinned Claim
   const handlePresentQuote = () => {
     const claim = pinnedClaims.find(c => c.id === activeClaimId);
+    const isFinalGate = claim?.id === 'claim_ryan_confirmations';
     const quote = collectedQuotes.find(q => q.id === selectedQuoteId);
 
-    if (!claim || !quote) return;
-
-    // Guard: Prevent re-submitting an already presented combination in this exchange
-    const alreadyPresented = (presentedQuotesByClaim[claim.id] || []).includes(quote.id);
-    if (alreadyPresented) {
-      sound.playShock();
-      setMismatchFeedback(`You already presented this card against "${claim.originalText}". It was insufficient.`);
+    if (!claim || (!quote && !isFinalGate)) return;
+    if (isFinalGate && !isFinalGateUnlocked) {
+      setMismatchFeedback('Resolve the first three claims before tracing the final reassurance chain.');
       return;
     }
 
-    const isTargetMatch = claim.targetQuoteIds 
-      ? claim.targetQuoteIds.includes(quote.id) 
-      : (quote.id === claim.targetQuoteId);
+    if (isFinalGate) {
+      const progress = getFinalGateEvidenceProgress(selectedFinalQuoteIds);
+      if (!canChallengeFinalGate(selectedFinalQuoteIds)) {
+        const missing = [!progress.noah && 'Noah', !progress.alyssa && 'Alyssa', !progress.ryan && 'Ryan'].filter(Boolean).join(', ');
+        setMismatchFeedback(`Trace every voice in the claim. Still missing: ${missing}.`);
+        return;
+      }
+    }
+
+    // Guard: Prevent re-submitting an already presented combination in this exchange
+    const alreadyPresented = !isFinalGate && quote ? (presentedQuotesByClaim[claim.id] || []).includes(quote.id) : false;
+    if (alreadyPresented) {
+      sound.playShock();
+      setMismatchFeedback(`You already presented this item against "${claim.originalText}". It was insufficient.`);
+      return;
+    }
+
+    const isTargetMatch = isFinalGate ? true : claim.targetQuoteIds
+      ? claim.targetQuoteIds.includes(quote!.id)
+      : (quote!.id === claim.targetQuoteId);
 
     if (isTargetMatch) {
       // SUCCESSFUL CONTRADICTION!
       sound.playTakeThat();
       setIsEvidenceDrawerOpen(false);
+      setSelectedQuoteId(null);
 
       // Mark claim as corrected
       setPinnedClaims(prev =>
         prev.map(c => (c.id === claim.id ? { ...c, isCorrected: true } : c))
       );
+      if (isFinalGate) setSelectedFinalQuoteIds([]);
 
       // Trigger "AHA!" / "OBJECTION!" cut-in animation
       setCutInCustomText('AHA!');
@@ -250,6 +252,7 @@ export default function App() {
       // MISMATCH: Record miss and track presented combination
       sound.playBuzzer();
 
+      if (!quote) return;
       const newMissCount = (exchangeMisses[claim.id] || 0) + 1;
       setExchangeMisses(prev => ({ ...prev, [claim.id]: newMissCount }));
 
@@ -295,8 +298,7 @@ export default function App() {
     if (nextUnsolved) {
       setActiveClaimId(nextUnsolved.id);
       setSelectedCharacterId(nextUnsolved.speakerId);
-      const preparedEvidence = collectedQuotes.find(quote => nextUnsolved.targetQuoteIds.includes(quote.id));
-      setSelectedQuoteId(preparedEvidence?.id || null);
+      setSelectedQuoteId(null);
     }
   };
 
@@ -312,13 +314,25 @@ export default function App() {
     // Auto-select corresponding pinned claim if present
     const matchingClaim = pinnedClaims.find(c => c.speakerId === id);
     if (matchingClaim) {
+      if (matchingClaim.id !== activeClaimId) {
+        setSelectedQuoteId(null);
+        setSelectedFinalQuoteIds([]);
+      }
       setActiveClaimId(matchingClaim.id);
     }
   };
 
   // Selecting a claim to focus on
   const handleSelectClaim = (claimId: string) => {
+    if (claimId === 'claim_ryan_confirmations' && !isFinalGateUnlocked) {
+      setMismatchFeedback('Final gate locked: resolve the first three claims, then trace each reassurance to its source.');
+      return;
+    }
     sound.playClick();
+    if (claimId !== activeClaimId) {
+      setSelectedQuoteId(null);
+      setSelectedFinalQuoteIds([]);
+    }
     setActiveClaimId(claimId);
     const claim = pinnedClaims.find(c => c.id === claimId);
     if (claim) {
@@ -339,6 +353,7 @@ export default function App() {
 
   // Final Response Decision
   const handleSelectFinalResponse = (endingType: EndingType) => {
+    if (!canonicalEndingType) setCanonicalEndingType(endingType);
     const ending = GAME_ENDINGS[endingType];
     setActiveEnding(ending);
   };
@@ -354,6 +369,19 @@ export default function App() {
     setIsReducedMotion(prev => !prev);
   };
 
+  const handleToggleMusic = () => setIsMusicEnabled(music.setEnabled(!isMusicEnabled));
+
+  const handleAdvanceTutorial = (next: TutorialStep) => {
+    setTutorialStep(next);
+    if (next === 'investigation_completed') {
+      music.duck(true);
+      setCutInCustomText('AHA!');
+      setCutInSubtitle('PRACTICE COMPLETE — IMPORTANT OBSERVATIONS CAN BE RECORDED');
+      setCutInVariant('clue');
+      setIsAhaCutInActive(true);
+    }
+  };
+
   // Restart Investigation
   const handleRestart = () => {
     sound.playClick();
@@ -363,6 +391,7 @@ export default function App() {
     setCollectedQuotes([]);
     setHotspots(INVESTIGATION_HOTSPOTS);
     setSelectedQuoteId(null);
+    setSelectedFinalQuoteIds([]);
     setSelectedCharacterId('ryan');
     setLastReactionText(null);
     setLastDialogueLead(null);
@@ -370,11 +399,15 @@ export default function App() {
     setMismatchFeedback(null);
     setExchangeMisses({});
     setPresentedQuotesByClaim({});
+    setSelectedFinalQuoteIds([]);
     setActiveEnding(null);
+    setHasUsedReconsideration(false);
+    setCanonicalEndingType(null);
+    setIsCrossExamPracticeOpen(false);
+    setPendingCrossExamPractice(false);
     setIsLostExchangeModalOpen(false);
     setIsTutorialEnabled(true);
     setTutorialStep('none');
-    setIsStructureOverviewOpen(false);
     setGameState('title');
   };
 
@@ -384,7 +417,7 @@ export default function App() {
       <TitleScreen
         onStartGame={() => {
           sound.playDramaticHit();
-          setGameState('setup');
+          setGameState(hasSeenDisplayPrompt?'setup':'display');
         }}
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
@@ -393,6 +426,8 @@ export default function App() {
       />
     );
   }
+
+  if(gameState==='display') return <DisplayModePrompt isSupported={fullscreen.isSupported} onEnterFullscreen={fullscreen.enter} onContinue={()=>{setHasSeenDisplayPrompt(true);setGameState('setup');}}/>;
 
   // 2. Character Setup Screen (Avatar & Name Selection)
   if (gameState === 'setup') {
@@ -415,7 +450,7 @@ export default function App() {
         playerProfile={playerProfile}
         onStartInvestigation={() => {
           setGameState('investigation');
-          setIsStructureOverviewOpen(true);
+          setTutorialStep(isTutorialEnabled ? 'investigation_select_speaker' : 'none');
         }}
         onBackToSetup={() => setGameState('setup')}
         isReducedMotion={isReducedMotion}
@@ -428,7 +463,7 @@ export default function App() {
   const activePinnedClaim = pinnedClaims.find(c => c.id === activeClaimId) || pinnedClaims[0];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-body selection:bg-amber-500 selection:text-black">
+    <div className="h-dvh overflow-hidden bg-slate-950 text-slate-100 flex flex-col font-body selection:bg-amber-500 selection:text-black">
       {/* Top Navigation */}
       <Navbar
         onOpenGraph={() => setIsTrustGraphOpen(true)}
@@ -436,24 +471,21 @@ export default function App() {
         onReturnToTitle={() => setGameState('title')}
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
+        isMusicEnabled={isMusicEnabled}
+        onToggleMusic={handleToggleMusic}
         isReducedMotion={isReducedMotion}
         onToggleReducedMotion={handleToggleReducedMotion}
-        discoveredCluesCount={gameState === 'investigation' ? collectedQuotes.length : solvedCount}
+        discoveredCluesCount={gameState === 'investigation'
+          ? REQUIRED_INVESTIGATION_EVIDENCE_IDS.filter(id => collectedQuotes.some(quote => quote.id === id)).length
+          : solvedCount}
         totalClues={gameState === 'investigation' ? REQUIRED_INVESTIGATION_EVIDENCE_IDS.length : pinnedClaims.length}
         canObject={canBreakLoop}
+        isFullscreen={fullscreen.isFullscreen}
+        onToggleFullscreen={fullscreen.toggle}
       />
 
       {/* Main Playable Stage by Segment */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-2 py-2 sm:px-5 sm:py-3 flex flex-col space-y-3">
-        <TutorialGuide
-          step={tutorialStep}
-          onSkip={() => {
-            setIsTutorialEnabled(false);
-            setTutorialStep('none');
-          }}
-          onOpenHowToPlay={() => setIsHowToPlayOpen(true)}
-        />
-
+      <main className="min-h-0 flex-1 max-w-7xl w-full mx-auto px-2 py-2 sm:px-5 sm:py-3 flex flex-col gap-2 overflow-hidden">
         {gameState === 'investigation' ? (
           /* SEGMENT 1: First-Person Investigation */
           <InvestigationSegment
@@ -466,11 +498,11 @@ export default function App() {
             onOpenBriefing={() => setIsBriefingOpen(true)}
             isReducedMotion={isReducedMotion}
             tutorialStep={tutorialStep}
-            onAdvanceTutorialStep={(nextStep) => setTutorialStep(nextStep)}
+            onAdvanceTutorialStep={handleAdvanceTutorial}
           />
         ) : (
           /* SEGMENT 2: Tense Cross-Examination */
-          <>
+          <div className="courtroom-stage-grid grid min-h-0 flex-1 grid-rows-[clamp(220px,34dvh,320px)_minmax(0,1fr)] gap-2">
             {/* Stage Banner: Pinned Living Room Scene with Active Witness Focus */}
             <RoomBackground
               characters={characters}
@@ -488,9 +520,6 @@ export default function App() {
               testimony={activeTestimony}
               onPressInquiry={handlePressInquiry}
               canBreakLoop={canBreakLoop}
-              onSelectFinalResponse={handleSelectFinalResponse}
-              onOpenSourceMap={() => setIsSourceMapOpen(true)}
-              hasEarnedCaseCard={hasEarnedCaseCard}
               lastReactionText={lastReactionText}
               lastDialogueLead={lastDialogueLead}
               recentlyCollectedQuote={recentlyCollectedQuote}
@@ -505,9 +534,9 @@ export default function App() {
               exchangeMisses={exchangeMisses[activePinnedClaim.id] || 0}
               onRetryExchange={() => handleRetryExchange(activePinnedClaim.id)}
               tutorialStep={tutorialStep}
-              onAdvanceTutorialStep={(nextStep) => setTutorialStep(nextStep)}
+              onAdvanceTutorialStep={handleAdvanceTutorial}
             />
-          </>
+          </div>
         )}
       </main>
 
@@ -521,13 +550,12 @@ export default function App() {
         collectedQuotes={collectedQuotes}
         selectedQuoteId={selectedQuoteId}
         onSelectQuote={(id) => setSelectedQuoteId(id)}
+        selectedFinalQuoteIds={selectedFinalQuoteIds}
+        onToggleFinalQuote={(id) => setSelectedFinalQuoteIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id])}
+        isFinalGateUnlocked={isFinalGateUnlocked}
         onPresentQuote={handlePresentQuote}
         mismatchFeedback={mismatchFeedback}
         onDismissMismatch={() => setMismatchFeedback(null)}
-        onOpenSourceMap={() => {
-          setIsEvidenceDrawerOpen(false);
-          setIsSourceMapOpen(true);
-        }}
         presentedQuoteIds={presentedQuotesByClaim[activePinnedClaim.id] || []}
         exchangeMisses={exchangeMisses[activePinnedClaim.id] || 0}
         onRetryExchange={() => handleRetryExchange(activePinnedClaim.id)}
@@ -540,16 +568,6 @@ export default function App() {
         isOpen={isLostExchangeModalOpen}
         claim={activePinnedClaim}
         onRetry={() => handleRetryExchange(activePinnedClaim.id)}
-      />
-
-      {/* Interactive Source Map Modal */}
-      <SourceMapModal
-        isOpen={isSourceMapOpen}
-        onClose={() => setIsSourceMapOpen(false)}
-        collectedQuotes={collectedQuotes}
-        hasEarnedCaseCard={hasEarnedCaseCard}
-        onAwardCaseCard={handleAwardCaseCard}
-        onOpenEvidenceDrawer={() => setIsEvidenceDrawerOpen(true)}
       />
 
       {/* Cinematic Breakthrough Modal (Contradiction Payoff) */}
@@ -574,7 +592,11 @@ export default function App() {
         subtitle={cutInSubtitle}
         variant={cutInVariant}
         isReducedMotion={isReducedMotion}
-        onComplete={() => setIsAhaCutInActive(false)}
+        onComplete={() => {
+          setIsAhaCutInActive(false);
+          music.duck(false);
+          if (pendingCrossExamPractice) { setPendingCrossExamPractice(false); setIsCrossExamPracticeOpen(true); }
+        }}
       />
 
       {/* Mind Palace: The Trust Graph Modal */}
@@ -587,6 +609,7 @@ export default function App() {
           setIsTrustGraphOpen(false);
         }}
         canObject={canBreakLoop}
+        onSelectFinalResponse={handleSelectFinalResponse}
       />
 
       {/* Initial Case Briefing / Help Modal */}
@@ -600,22 +623,28 @@ export default function App() {
         ending={activeEnding}
         playerProfile={playerProfile}
         onRestart={handleRestart}
-        onSelectDifferentResponse={() => setActiveEnding(null)}
-      />
-
-      {/* Structure Overview Modal (Shown before Investigation begins) */}
-      <StructureOverviewModal
-        isOpen={isStructureOverviewOpen}
-        onProceed={() => {
-          setIsStructureOverviewOpen(false);
-          setTutorialStep('investigation_select_speaker');
-        }}
+        canReconsider={!hasUsedReconsideration}
+        canonicalEnding={canonicalEndingType ? GAME_ENDINGS[canonicalEndingType] : null}
+        onSelectDifferentResponse={() => { setHasUsedReconsideration(true); setActiveEnding(null); }}
       />
 
       {/* How To Play Modal (Accessible anytime via Navbar or TutorialGuide) */}
       <HowToPlayModal
         isOpen={isHowToPlayOpen}
         onClose={() => setIsHowToPlayOpen(false)}
+        isReducedMotion={isReducedMotion}
+        onReplayInvestigation={gameState==='investigation'?()=>{setIsHowToPlayOpen(false);setTutorialStep('investigation_select_speaker');}:undefined}
+        onReplayCrossExam={gameState==='crossexam'?()=>{setIsHowToPlayOpen(false);setIsCrossExamPracticeOpen(true);}:undefined}
+      />
+      <CrossExamPractice
+        isOpen={isCrossExamPracticeOpen}
+        onSkip={() => { setIsCrossExamPracticeOpen(false); setTutorialStep('crossexam_completed'); }}
+        onComplete={() => {
+          setIsCrossExamPracticeOpen(false);
+          setTutorialStep('crossexam_completed');
+          setCutInCustomText('AHA!'); setCutInSubtitle('CLAIM TESTED — PRACTICE COMPLETE'); setCutInVariant('clue'); setIsAhaCutInActive(true);
+        }}
+        isReducedMotion={isReducedMotion}
       />
     </div>
   );

@@ -189,6 +189,7 @@ export const PhoneInspectionModal: React.FC<PhoneInspectionModalProps> = ({
   };
 
   const handleRecordEvidenceClick = () => {
+    if (isAlreadyRecorded) return;
     sound.playRecordClue();
     import('../../data/gameData').then(({ ALL_DISCOVERABLE_QUOTES }) => {
       const evidence = ALL_DISCOVERABLE_QUOTES['item_telegram_chat_log'];
@@ -397,7 +398,7 @@ export const PhoneInspectionModal: React.FC<PhoneInspectionModalProps> = ({
             onClick={onClose}
             className="px-3.5 py-1.5 text-xs font-display uppercase tracking-wider text-slate-400 hover:text-white cursor-pointer"
           >
-            Put Phone Down
+            Finished Inspecting
           </button>
 
           {/* Active Record Clue Button (illuminates when player selects the critical reliance message) */}
@@ -408,10 +409,11 @@ export const PhoneInspectionModal: React.FC<PhoneInspectionModalProps> = ({
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={handleRecordEvidenceClick}
-              className="px-4 py-2 bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-heading font-black text-xs uppercase tracking-wider rounded border border-white flex items-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.4)] cursor-pointer"
+              disabled={isAlreadyRecorded}
+              className="px-4 py-2 bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-heading font-black text-xs uppercase tracking-wider rounded border border-white flex items-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.4)] cursor-pointer disabled:bg-emerald-950 disabled:text-emerald-300 disabled:border-emerald-500 disabled:cursor-default"
             >
               <BookmarkCheck className="w-4 h-4 text-slate-950" />
-              <span>{isAlreadyRecorded ? 'Update Chat Clue in Case File' : 'RECORD CLUE IN CASE FILE'}</span>
+              <span>{isAlreadyRecorded ? 'Recorded in Case File' : 'RECORD CLUE IN CASE FILE'}</span>
             </motion.button>
           ) : (
             <div className="text-[11px] text-slate-400 font-mono italic">

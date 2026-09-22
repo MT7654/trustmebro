@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, FastForward, HelpCircle, Flame, ShieldAlert, Sparkles, Check, BookmarkPlus, Pin, Quote, ArrowRight, CheckCircle2, ChevronRight, Network, Lock, RotateCcw, AlertOctagon, Send } from 'lucide-react';
 import { Character, TestimonyStep, PressInquiry, EvidenceQuote, PinnedClaim, EndingType, TutorialStep } from '../types';
-import { FINAL_RESPONSE_OPTIONS } from '../data/gameData';
 import { CharacterIllustration } from './CharacterIllustration';
 import { sound } from '../utils/sound';
 
@@ -11,9 +10,6 @@ interface DialogueBoxProps {
   testimony: TestimonyStep;
   onPressInquiry: (inquiry: PressInquiry) => void;
   canBreakLoop: boolean;
-  onSelectFinalResponse: (endingType: EndingType) => void;
-  onOpenSourceMap: () => void;
-  hasEarnedCaseCard: boolean;
   lastReactionText?: string | null;
   lastDialogueLead?: string | null;
   recentlyCollectedQuote?: EvidenceQuote | null;
@@ -36,9 +32,6 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
   testimony,
   onPressInquiry,
   canBreakLoop,
-  onSelectFinalResponse,
-  onOpenSourceMap,
-  hasEarnedCaseCard,
   lastReactionText,
   lastDialogueLead,
   recentlyCollectedQuote,
@@ -126,9 +119,9 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
   };
 
   return (
-    <div className="w-full bg-slate-900 border-2 border-slate-700 text-slate-100 rounded-lg shadow-xl flex flex-col relative overflow-hidden">
+    <div className="courtroom-dialogue h-full min-h-0 w-full text-slate-100 grid grid-cols-1 grid-rows-[auto_auto_auto_minmax(0,1fr)] gap-2 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.32fr)] lg:grid-rows-[auto_auto_auto_minmax(0,1fr)] relative overflow-hidden">
       {/* Top Claim Strip & Evidence Trigger */}
-      <div className="bg-slate-950 px-3 py-1.5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 z-10">
+      <div className="courtroom-status-rail col-span-1 lg:col-span-2 rounded-lg bg-slate-950 px-3 py-1.5 border border-slate-700 flex flex-wrap items-center justify-between gap-2 z-10">
         {/* Claim switch tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
           <span className="text-[10px] font-display uppercase tracking-wider text-amber-400 font-bold mr-1 flex items-center gap-1">
@@ -140,6 +133,7 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
             return (
               <button
                 key={c.id}
+                data-tutorial-target={`claim-tab-${c.id}`}
                 onClick={() => {
                   sound.playClick();
                   onSelectClaim(c.id);
@@ -164,35 +158,12 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
           })}
         </div>
 
-        {/* Actions: Source Map & Evidence Drawer */}
+        {/* Case notes */}
         <div className="flex items-center gap-1.5">
-          {/* Interactive Source Map Button */}
-          <button
-            id="open-source-map-from-dialogue"
-            onClick={() => {
-              sound.playClick();
-              onOpenSourceMap();
-            }}
-            className={`px-2.5 py-1 font-heading font-black text-[11px] sm:text-xs uppercase tracking-wider rounded border transition-all hover:scale-102 flex items-center gap-1 cursor-pointer ${
-              hasEarnedCaseCard
-                ? 'bg-emerald-500 text-slate-950 border-emerald-300'
-                : activeClaim.id === 'claim_ryan_confirmations'
-                ? 'bg-amber-400 text-slate-950 border-amber-300 animate-pulse'
-                : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
-            }`}
-          >
-            <Network className="w-3.5 h-3.5" />
-            <span>Source Map</span>
-            {hasEarnedCaseCard && (
-              <span className="text-[8px] font-display font-black px-1 rounded bg-black text-emerald-300">
-                CARD READY
-              </span>
-            )}
-          </button>
-
           {/* Evidence Drawer Button */}
           <button
             id="open-evidence-drawer-from-dialogue"
+            data-tutorial-target="open-evidence-drawer-from-dialogue"
             onClick={() => {
               sound.playPaperSlide();
               onOpenEvidenceDrawer();
@@ -209,13 +180,13 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
       </div>
 
       {/* Pinned Premise & Room Attention in a unified, space-saving banner */}
-      <div className="bg-slate-900/90 px-3 py-2 border-b border-slate-800 flex flex-col gap-1.5 z-10">
+      <div className="courtroom-claim-rail col-span-1 lg:col-span-2 rounded-lg bg-slate-900/95 px-3 py-1.5 border border-slate-700 flex flex-col gap-1 z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <span className="text-[9px] font-display uppercase tracking-wider bg-slate-950 text-amber-300 px-1.5 py-0.5 rounded border border-slate-800 font-bold shrink-0">
               PINNED STATEMENT
             </span>
-            <p className="font-heading font-black text-xs sm:text-[13px] text-slate-200 truncate">
+            <p className="font-body font-semibold text-xs sm:text-[13px] text-slate-200 truncate">
               {activeClaim.speakerName}:{' '}
               {activeClaim.isCorrected ? (
                 <span className="text-emerald-300">
@@ -223,7 +194,7 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
                   <strong className="text-emerald-300 underline underline-offset-2">{activeClaim.keyWordCorrected}</strong>
                 </span>
               ) : (
-                <span className="text-amber-200">
+                <span className="text-readable-gold">
                   "{activeClaim.originalText.replace(activeClaim.keyWordOriginal, `[${activeClaim.keyWordOriginal}]`)}"
                 </span>
               )}
@@ -273,11 +244,9 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
       </div>
 
       {/* Nameplate & Speaker Avatar */}
-      <div className="bg-slate-950 text-white px-3 py-1.5 border-b border-slate-800 flex items-center justify-between z-10">
+      <div className="courtroom-narrative-head rounded-t-lg bg-slate-950 text-white px-3 py-1.5 border border-slate-700 border-b-slate-800 flex items-center justify-between z-10 lg:col-start-1 lg:row-start-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border border-slate-700 bg-slate-900 shrink-0 flex items-center justify-center">
-            <CharacterIllustration characterId={activeCharacter.id} expression={activeCharacter.currentExpression} size="sm" />
-          </div>
+          <CharacterIllustration characterId={activeCharacter.id} expression={activeCharacter.currentExpression} size="sm" variant="avatar" />
           <div className="flex items-center gap-1.5">
             <span className="font-heading font-black text-xs sm:text-sm uppercase tracking-wider text-amber-400">
               {activeCharacter.name}
@@ -303,7 +272,7 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
       {/* Dialogue Text Viewport */}
       <div
         onClick={() => isTyping && handleSkipTyping()}
-        className="px-4 py-3 min-h-[70px] sm:min-h-[80px] flex flex-col justify-center cursor-pointer relative z-10 bg-slate-900/40"
+        className="courtroom-narrative-body min-h-0 overflow-y-auto rounded-b-lg border border-t-0 border-slate-700 px-4 py-3 flex flex-col justify-center cursor-pointer relative z-10 bg-slate-900/70 lg:col-start-1 lg:row-start-4"
       >
         <p className="font-body text-sm sm:text-base text-slate-100 font-semibold leading-relaxed">
           {displayedText}
@@ -376,7 +345,7 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
       </div>
 
       {/* Cross-Examination & Action Area */}
-      <div className="bg-slate-950 px-3 py-2.5 sm:px-4 border-t border-slate-800 z-10 space-y-2">
+      <div className="courtroom-command-surface min-h-0 overflow-y-auto rounded-lg bg-slate-950 px-3 py-2.5 sm:px-4 border border-slate-700 z-10 space-y-2 lg:col-start-2 lg:row-start-3 lg:row-span-2">
         {/* Lost Exchange Banner */}
         {isExchangeLost && (
           <div className="p-2.5 bg-rose-950/90 border border-rose-500 rounded text-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow">
@@ -432,13 +401,14 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
             PRESS {activeCharacter.name.toUpperCase()} ON THIS STATEMENT:
           </span>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          <div className="courtroom-press-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5">
             {testimony.inquiries.map((inq, idx) => {
               const isTutorialPressTarget = idx === 0 && tutorialStep === 'crossexam_press_statement';
               return (
                 <button
                   key={inq.id}
                   id={`press-inquiry-${idx}`}
+                  data-tutorial-target={`press-inquiry-${idx}`}
                   onClick={() => {
                     sound.playClick();
                     onPressInquiry(inq);
@@ -462,67 +432,22 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
           </div>
         </div>
 
-        {/* Final Room Deliberation when all 3 gates are solved */}
+        {/* Outcome choices live in Case Progress after the whole-case review. */}
         <div className="pt-2 border-t border-slate-800 space-y-3">
           {canBreakLoop ? (
-            <div className="space-y-3 bg-slate-900 border-2 border-yellow-400 p-4 sm:p-5 rounded-lg shadow-xl">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-yellow-400" />
-                  <span className="font-heading font-black text-sm sm:text-base text-yellow-300 uppercase tracking-wider">
-                    FINAL DELIBERATION: HOW DO YOU RESPOND TO THE ROOM?
-                  </span>
-                </div>
-                <span className="text-[10px] bg-yellow-400 text-slate-950 px-2.5 py-0.5 font-display font-black uppercase tracking-wider rounded">
-                  3/3 GATES SOLVED
-                </span>
+            <div className="flex items-center justify-between gap-3 rounded-lg border-2 border-yellow-400 bg-amber-950/35 p-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                <div><div className="font-heading text-sm font-black uppercase text-yellow-300">Case complete</div><p className="text-xs text-slate-300">Open Case Progress to review what you proved, then decide what to do.</p></div>
               </div>
-
-              <p className="text-xs sm:text-sm text-slate-300 font-body leading-relaxed">
-                The entire dependency chain has been uncovered. Noah, Alyssa, and Ryan are all looking at you across the table, waiting to see what you do next.
-              </p>
-
-              <div className="space-y-2 pt-1">
-                {FINAL_RESPONSE_OPTIONS.map((opt, idx) => (
-                  <button
-                    key={opt.id}
-                    id={`final-response-opt-${opt.id}`}
-                    onClick={() => {
-                      sound.playDramaticHit();
-                      onSelectFinalResponse(opt.id);
-                    }}
-                    className={`w-full p-3.5 text-left rounded border transition-all flex items-start justify-between gap-3 group cursor-pointer ${
-                      opt.id === 'BREAK_THE_CHAIN'
-                        ? 'bg-slate-950 hover:bg-emerald-950/60 border-slate-700 hover:border-emerald-400'
-                        : opt.id === 'THE_NEXT_VOICE'
-                        ? 'bg-slate-950 hover:bg-rose-950/60 border-slate-700 hover:border-rose-400'
-                        : 'bg-slate-950 hover:bg-amber-950/60 border-slate-700 hover:border-amber-400'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="font-display font-black text-xs px-2 py-0.5 bg-slate-900 border border-slate-700 text-yellow-400 rounded shrink-0">
-                        {idx + 1}
-                      </span>
-                      <div>
-                        <div className="font-heading font-black text-xs sm:text-sm text-white group-hover:text-yellow-300 transition-colors">
-                          {opt.promptText}
-                        </div>
-                        <div className="text-[11px] text-slate-400 font-body mt-0.5">
-                          {opt.subtext}
-                        </div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0 mt-1" />
-                  </button>
-                ))}
-              </div>
+              <span className="rounded bg-yellow-400 px-2 py-1 font-display text-[10px] font-black text-slate-950">4/4</span>
             </div>
           ) : (
             <div className="w-full p-3 bg-slate-900 border border-slate-800 rounded text-slate-400 flex items-center justify-between gap-2 text-xs font-display">
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4 text-slate-500 shrink-0" />
                 <span>
-                  <strong className="text-slate-300 uppercase">Final Room Deliberation:</strong> Solve all 3 evidence gates to unlock the final response choice ({claims.filter(c => c.isCorrected).length}/3 Solved)
+                  <strong className="text-slate-300 uppercase">Case progress:</strong> Resolve all four claims ({claims.filter(c => c.isCorrected).length}/4 solved)
                 </span>
               </div>
               <span className="text-[10px] bg-slate-950 text-slate-500 px-2 py-0.5 rounded border border-slate-800 uppercase font-bold">

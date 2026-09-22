@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Volume1, Volume2, X } from 'lucide-react';
 import { TutorialStep } from '../../types';
 import { sound } from '../../utils/sound';
+import { GuidedSpotlight } from '../tutorial/GuidedSpotlight';
 
 interface SpeakerTutorialModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface SpeakerTutorialModalProps {
   tutorialStep: TutorialStep;
   onAdvanceTutorialStep: (step: TutorialStep) => void;
   isReducedMotion?: boolean;
+  onSkip?: () => void;
 }
 
 const VIEWS = ['front', 'side', 'back'] as const;
@@ -19,7 +21,8 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
   onClose,
   tutorialStep,
   onAdvanceTutorialStep,
-  isReducedMotion = false
+  isReducedMotion = false,
+  onSkip
 }) => {
   const [viewIndex, setViewIndex] = useState(0);
   const [volumeFound, setVolumeFound] = useState(false);
@@ -28,8 +31,9 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
 
   const rotate = (direction: number) => {
     sound.playBoxRotate();
-    setViewIndex(prev => (prev + direction + VIEWS.length) % VIEWS.length);
-    if (tutorialStep === 'investigation_rotate_speaker') {
+    const next=(viewIndex + direction + VIEWS.length) % VIEWS.length;
+    setViewIndex(next);
+    if (tutorialStep === 'investigation_rotate_speaker' && next===2) {
       onAdvanceTutorialStep('investigation_find_volume');
     }
   };
@@ -71,11 +75,12 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
             <p className="text-[10px] font-display font-bold uppercase tracking-[.28em] text-cyan-300">Practice object · nothing recorded</p>
             <h2 id="speaker-tutorial-title" className="font-heading text-xl font-black text-white sm:text-2xl">Turn down the music</h2>
           </div>
-          <button onClick={onClose} aria-label="Close speaker inspection" className="rounded-full p-2 text-slate-400 hover:bg-white/10 hover:text-white"><X className="h-5 w-5" /></button>
+          <button onClick={() => { if (window.confirm('Skip this practice tutorial and enter the investigation?')) (onSkip || onClose)(); }} aria-label="Skip tutorial" className="flex items-center gap-2 rounded-full border border-white/15 px-3 py-2 text-xs font-bold uppercase text-slate-300 hover:bg-white/10 hover:text-white">Skip tutorial <X className="h-4 w-4" /></button>
         </div>
 
         <div className="grid gap-0 sm:grid-cols-[1.35fr_.65fr]">
           <div
+            data-tutorial-target="speaker-rotate-area"
             className="relative min-h-[360px] overflow-hidden bg-[radial-gradient(circle_at_50%_42%,rgba(34,211,238,.18),transparent_55%),linear-gradient(#111a30,#070b14)]"
             onPointerDown={event => { dragStart.current = event.clientX; }}
             onPointerUp={event => {
@@ -91,20 +96,19 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
               key={viewIndex}
               initial={isReducedMotion ? false : { opacity: 0, rotateY: 24 }}
               animate={{ opacity: 1, rotateY: 0 }}
-              className="absolute left-1/2 top-1/2 h-52 w-72 -translate-x-1/2 -translate-y-1/2 rounded-[2.2rem] border border-cyan-200/40 bg-gradient-to-br from-slate-700 via-slate-900 to-black shadow-[0_35px_45px_rgba(0,0,0,.55),inset_0_1px_0_rgba(255,255,255,.18)]"
+              className="absolute left-1/2 top-1/2 h-52 w-72 -translate-x-1/2 -translate-y-1/2 bg-contain bg-center bg-no-repeat drop-shadow-[0_30px_25px_rgba(0,0,0,.6)]"
+              style={{backgroundImage:"url('/art/tutorial/v1/portable-speaker-turnaround.png')",backgroundSize:'300% 100%',backgroundPosition:`${viewIndex*50}% 50%`}}
             >
-              <div className="absolute inset-5 rounded-[1.6rem] border border-white/10 bg-[radial-gradient(circle,rgba(255,255,255,.13)_1px,transparent_1.5px)] [background-size:7px_7px]" />
-              <div className="absolute left-6 top-5 text-[10px] font-display tracking-[.25em] text-cyan-200/80">ROOMBEAT</div>
               {viewIndex === 2 && (
                 <button
+                  data-tutorial-target="speaker-volume-control"
                   onClick={findVolume}
                   aria-label="Inspect volume control"
-                  className={`absolute right-6 top-1/2 h-14 w-14 -translate-y-1/2 rounded-full border-2 bg-slate-950 shadow-lg transition ${tutorialStep === 'investigation_find_volume' ? 'animate-pulse border-yellow-300 ring-4 ring-yellow-300/30' : 'border-cyan-300/60'}`}
+                  className={`absolute right-10 top-1/2 h-14 w-14 -translate-y-1/2 rounded-full border-2 bg-slate-950/75 shadow-lg transition ${tutorialStep === 'investigation_find_volume' ? 'animate-pulse border-yellow-300 ring-4 ring-yellow-300/30' : 'border-cyan-300/60'}`}
                 >
                   <Volume2 className="m-auto h-6 w-6 text-cyan-200" />
                 </button>
               )}
-              <div className="absolute inset-x-16 -bottom-4 h-5 rounded-full bg-black/70 blur-md" />
             </motion.div>
             <div className="absolute bottom-5 inset-x-0 text-center text-xs text-slate-400">Drag, swipe, use A/D or arrow keys to rotate</div>
           </div>
@@ -124,7 +128,7 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
             </div>
 
             {volumeFound && !volumeDown && (
-              <button onClick={lowerVolume} className="mt-6 flex min-h-12 items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 font-heading text-sm font-black uppercase tracking-wide text-slate-950 hover:bg-cyan-200">
+              <button data-tutorial-target="speaker-lower-volume" onClick={lowerVolume} className="mt-6 flex min-h-12 items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 font-heading text-sm font-black uppercase tracking-wide text-slate-950 hover:bg-cyan-200">
                 <Volume1 className="h-5 w-5" /> Turn music down
               </button>
             )}
@@ -136,6 +140,9 @@ export const SpeakerTutorialModal: React.FC<SpeakerTutorialModalProps> = ({
           </div>
         </div>
       </motion.div>
+      {tutorialStep==='investigation_rotate_speaker'&&<GuidedSpotlight target="speaker-rotate-area" step={2} total={4} title="Rotate the speaker" instruction="Drag or swipe the object, use the arrow controls, or press A/D until you can see its rear controls." onSkip={()=>onSkip?.()} isReducedMotion={isReducedMotion}/>}
+      {tutorialStep==='investigation_find_volume'&&<GuidedSpotlight target="speaker-volume-control" step={3} total={4} title="Inspect the volume control" instruction="Select the control you found on the back of the speaker." onSkip={()=>onSkip?.()} isReducedMotion={isReducedMotion}/>}
+      {tutorialStep==='investigation_lower_volume'&&<GuidedSpotlight target="speaker-lower-volume" step={4} total={4} title="Turn the music down" instruction="Use the highlighted action so everyone in the room can hear one another." onSkip={()=>onSkip?.()} isReducedMotion={isReducedMotion}/>}
     </div>
   );
 };

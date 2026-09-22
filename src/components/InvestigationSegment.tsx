@@ -19,7 +19,7 @@ import {
   Pin,
   Volume2
 } from 'lucide-react';
-import { Character, EvidenceQuote, InvestigationHotspot, PlayerProfile, TutorialStep } from '../types';
+import { Character, EvidenceQuote, InquiryProgress, InquiryProgressMap, InvestigationHotspot, PlayerProfile, TutorialStep } from '../types';
 import { CharacterIllustration } from './CharacterIllustration';
 import { EvidenceThumbnail } from './EvidenceThumbnail';
 import { sound } from '../utils/sound';
@@ -28,6 +28,7 @@ import { PhoneInspectionModal } from './inspection/PhoneInspectionModal';
 import { CharacterQuestionModal } from './inspection/CharacterQuestionModal';
 import { SpeakerTutorialModal } from './inspection/SpeakerTutorialModal';
 import { isInvestigationReady, REQUIRED_INVESTIGATION_EVIDENCE_IDS } from '../gameRules';
+import { GuidedSpotlight } from './tutorial/GuidedSpotlight';
 
 interface InvestigationSegmentProps {
   characters: Record<string, Character>;
@@ -57,6 +58,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
   const [activeModalHotspot, setActiveModalHotspot] = useState<InvestigationHotspot | null>(null);
   const [isCaseFileExpanded, setIsCaseFileExpanded] = useState(false);
   const [isSpeakerOpen, setIsSpeakerOpen] = useState(false);
+  const [inquiryProgress, setInquiryProgress] = useState<InquiryProgressMap>({});
 
   const inspectedIds = collectedEvidence.map(e => e.id);
   const essentialCount = REQUIRED_INVESTIGATION_EVIDENCE_IDS.filter(id => inspectedIds.includes(id)).length;
@@ -69,11 +71,15 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
 
   const handleRecordEvidenceFromModal = (evidence: EvidenceQuote) => {
     onCollectEvidence(evidence);
-    setActiveModalHotspot(null);
+  };
+
+  const getInquiryProgress = (id: 'ryan' | 'alyssa' | 'noah'): InquiryProgress => inquiryProgress[id] || {
+    phase: 'hearing',
+    heardQuestionIds: [`${id}_q1`], hearingIndex: 0, reviewIndex: 0, attemptedWrongIds: [], recordedQuoteId: null
   };
 
   return (
-    <div className="flex-1 flex flex-col space-y-3 w-full max-w-5xl mx-auto select-none">
+    <div className="min-h-0 flex-1 flex flex-col gap-2 w-full max-w-6xl mx-auto select-none">
       {/* Objective & Investigation Header Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900/90 via-slate-900/55 to-transparent p-3 sm:p-4 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-start gap-3">
@@ -93,7 +99,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
               Objective: Find out what everyone is relying on.
             </h2>
             <p className="text-xs text-slate-300 font-body">
-              Trace four decisive clues: the sealed box, Alyssa's assumption, Noah's reliance, and Ryan's seller chat.
+              Trace four decisive clues. You do not need to guess what is inside: if nobody can verify an unknown device, refuse it and do not pass reassurance onward.
             </p>
           </div>
         </div>
@@ -114,9 +120,9 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
       </div>
 
       {/* Main Interactive Room Exploration Stage */}
-      <div className="relative w-full h-[470px] sm:h-[540px] bg-slate-950 rounded-[2rem] overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,.55)] flex flex-col justify-between ring-1 ring-white/10">
+      <div className="relative min-h-0 w-full flex-1 bg-slate-950 bg-cover bg-center rounded-[2rem] overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,.55)] flex flex-col justify-between ring-1 ring-white/10" style={{backgroundImage:"url('/art/environments/living-room-empty-master.png')"}}>
         {/* Atmospheric Living Room Layer */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-950/90 to-black">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/25 via-slate-950/45 to-black/90">
           {/* City Window Silhouette */}
           <div className="absolute top-0 right-12 sm:right-24 w-48 sm:w-72 h-32 bg-indigo-950/30 border-b border-x border-slate-800/80 rounded-b flex items-center justify-around opacity-40">
             <div className="w-1 h-full bg-slate-800/40" />
@@ -224,6 +230,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
           {/* Foreground Glass Coffee Table with Object Hotspots */}
           <div className="relative w-full bg-gradient-to-b from-slate-700/65 to-slate-950/95 border border-white/10 rounded-[1.4rem] p-2.5 flex items-center justify-around gap-2 shadow-[0_20px_35px_rgba(0,0,0,.45)] overflow-x-auto">
             <motion.button
+              data-tutorial-target="investigation-speaker-hotspot"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => {
@@ -371,6 +378,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
             onClose={() => setIsSpeakerOpen(false)}
             tutorialStep={tutorialStep}
             onAdvanceTutorialStep={step => onAdvanceTutorialStep?.(step)}
+            onSkip={() => { setIsSpeakerOpen(false); onAdvanceTutorialStep?.('none'); }}
             isReducedMotion={isReducedMotion}
           />
         )}
@@ -405,6 +413,7 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
                   <div className="shrink-0">
                     <EvidenceThumbnail
                       type={item.thumbnailType || (item.category === 'physical' ? 'pod' : item.category === 'digital' ? 'phone' : 'ryan')}
+                      evidenceId={item.id}
                       size="sm"
                     />
                   </div>
@@ -438,29 +447,32 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
         )}
       </AnimatePresence>
 
+      {tutorialStep === 'investigation_select_speaker' && <GuidedSpotlight
+        target="investigation-speaker-hotspot" step={1} total={4}
+        title="Start with a harmless object"
+        instruction="Select the portable speaker on the coffee table. This practice object never enters the case file."
+        onSkip={()=>onAdvanceTutorialStep?.('none')} isReducedMotion={isReducedMotion}
+      />}
+
       {/* 2.5D Interactive Inspection & Inquiry Modals */}
       <AnimatePresence>
-        {activeModalHotspot && (activeModalHotspot.id === 'vape_pod' || activeModalHotspot.id === 'vape_box') && (
-          <BoxAndPodInspectionModal
-            isOpen={true}
+        <BoxAndPodInspectionModal
+            isOpen={Boolean(activeModalHotspot && (activeModalHotspot.id === 'vape_pod' || activeModalHotspot.id === 'vape_box'))}
             onClose={() => setActiveModalHotspot(null)}
             onRecordClue={handleRecordEvidenceFromModal}
-            isAlreadyRecorded={inspectedIds.includes(activeModalHotspot.evidenceId)}
+            recordedEvidenceIds={inspectedIds}
             playerProfile={playerProfile}
             isReducedMotion={isReducedMotion}
           />
-        )}
 
-        {activeModalHotspot && activeModalHotspot.id === 'telegram_phone' && (
-          <PhoneInspectionModal
-            isOpen={true}
+        <PhoneInspectionModal
+            isOpen={Boolean(activeModalHotspot && activeModalHotspot.id === 'telegram_phone')}
             onClose={() => setActiveModalHotspot(null)}
             onRecordClue={handleRecordEvidenceFromModal}
             isAlreadyRecorded={inspectedIds.includes('item_telegram_chat_log')}
             playerProfile={playerProfile}
             isReducedMotion={isReducedMotion}
           />
-        )}
 
         {activeModalHotspot && activeModalHotspot.id.startsWith('talk_') && (
           <CharacterQuestionModal
@@ -473,9 +485,15 @@ export const InvestigationSegment: React.FC<InvestigationSegmentProps> = ({
                 ? characters.alyssa
                 : characters.ryan
             }
-            onRecordClue={handleRecordEvidenceFromModal}
-            isAlreadyRecorded={inspectedIds.includes(activeModalHotspot.evidenceId)}
+            onRecordClue={(evidence) => {
+              onCollectEvidence(evidence);
+            }}
             playerProfile={playerProfile}
+            progress={getInquiryProgress(activeModalHotspot.id.replace('talk_', '') as 'ryan' | 'alyssa' | 'noah')}
+            onProgressChange={(next) => {
+              const id = activeModalHotspot.id.replace('talk_', '') as 'ryan' | 'alyssa' | 'noah';
+              setInquiryProgress(prev => ({ ...prev, [id]: next }));
+            }}
             isReducedMotion={isReducedMotion}
           />
         )}
